@@ -110,7 +110,7 @@ document.getElementByID('#iframe').contentWindow.postMessage(
 
 // Set up an event listener.
 
-var iframe = document.getElementByID('#iframe'),
+var iframe = document.getElementById('#iframe'),
   origin = iframe.src.split('/', 3).join('/');
 
 var play = function(){
