@@ -102,7 +102,7 @@ Client
 It's helpful to have a quick example of the JavaScript before moving forward.
 
 // Play the video
-document.getElementByID('#iframe').contentWindow.postMessage(
+document.getElementById('#iframe').contentWindow.postMessage(
   JSON.stringify({
     method: 'play'
   })
