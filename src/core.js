@@ -1,6 +1,6 @@
 var playjs = {};
 
-playjs.DEBUG = true;
+playjs.DEBUG = false;
 playjs.POST_MESSAGE = !!window.postMessage;
 
 /*

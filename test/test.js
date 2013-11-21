@@ -152,7 +152,7 @@ var loadPlayers = function() {
 
 for (var f in FRAMES){
   var iframe = document.createElement('iframe');
-  iframe.src = 'http://localhost.com:8000/dist/html/media.html?' + FRAMES[f];
+  iframe.src = 'http://cdn.embedly.com/widgets/media.html?' + FRAMES[f];
   iframe.id = 'iframe_'+f;
   iframe.width = 200;
   iframe.height = 200;

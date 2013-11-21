@@ -7,10 +7,33 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-s3');
 
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    s3: {
+      options: {
+        bucket: 'cdn-embed-ly',
+        access: 'public-read',
+        headers: {
+          //"Cache-Control": "max-age=43200, public"
+          "Cache-Control": "max-age=300, public"
+        }
+      },
+      release: {
+        upload: [
+          {
+            src: 'dist/player-<%= pkg.version %>.js',
+            dest: 'player-<%= pkg.version %>.js'
+          },
+          {
+            src: 'dist/player-<%= pkg.version %>.min.js',
+            dest: 'player-<%= pkg.version %>.min.js'
+          }
+       ]
+      }
+     },
     qunit: {
       all: ['test/**/*_test.html']
     },
@@ -87,6 +110,6 @@ module.exports = function(grunt) {
 
   // Default task.
   grunt.registerTask("default", ["concat:local", "connect:parent", "connect:child", "watch"]);
-  grunt.registerTask("release", ["concat:release", "uglify:release"]);
+  grunt.registerTask("release", ["concat:release", "uglify:release", "s3:release"]);
 
 };
