@@ -5,7 +5,7 @@ A JavaScript library for interacting with iframes that support Player.js spec.
 
 ::
 
-  var player = Player('#iframe');
+  var player = Player('iframe');
 
   player.on('ready', function(){
     player.on('play', function(){
@@ -36,14 +36,14 @@ player object. However, the player will internally queue messages until
 ready is called.
 ::
 
-  var player = Player('#iframe');
+  var player = Player('iframe');
 
   player.on(Player.Events.PLAY, function(
     console.log('play');
   ));
 
   player.on('ready', function(){
-    player.seekTo(20);
+    player.setCurrentTime(20);
   });
 
 
@@ -60,11 +60,11 @@ Methods
 
     player.pause();
 
-``isPaused``: boolean
+``getPaused``: boolean
   Determine if the media is paused::
 
-    player.isPaused(function(value){
-      console.log('isPaused:', value);
+    player.getPaused(function(value){
+      console.log('paused:', value);
     });
 
 ``mute``: void
@@ -77,11 +77,11 @@ Methods
 
     player.unmute();
 
-``isMuted``: boolean
+``getMuted``: boolean
   Determine if the media is muted::
 
-    player.isMuted(function(value){
-      console.log('isMuted:', value);
+    player.getMuted(function(value){
+      console.log('muted:', value);
     });
 
 ``setVolume``: void
@@ -103,10 +103,10 @@ Methods
       console.log('getDuration:', value);
     });
 
-``seekTo``: number
+``setCurrentTime``: number
   Perform a seek to a particular time in seconds::
 
-    player.seekTo(50);
+    player.setCurrentTime(50);
 
 ``getCurrentTime``: number
   Get the current time in seconds of the video::
@@ -115,7 +115,6 @@ Methods
       console.log('getCurrentTime:', value);
     });
 
-
 ``off``: void
   Remove an event listener. If the listener is specified it should remove only
   that listener, otherwise remove all listeners::
@@ -123,7 +122,6 @@ Methods
     player.off('play');
 
     player.off('play', playCallback);
-
 
 ``on``: void
   Add an event listener::
@@ -142,7 +140,7 @@ Events that can be listened to.
   of listening to the event.
 
 
-``loadProgress``
+``progress``
   fires when the media is loading additional media for playback::
 
     {
@@ -150,7 +148,7 @@ Events that can be listened to.
     }
 
 
-``playProgress``
+``timeupdate``
   fires during playback::
 
     data: {
@@ -159,13 +157,16 @@ Events that can be listened to.
     }
 
 ``play``
-  fires when the video starts to play
+  fires when the video starts to play.
 
 ``pause``
-  fires when the video is paused
+  fires when the video is paused.
 
-``finish``
-  fires when the video is finished
+``ended``
+  fires when the video is finished.
+
+``seeked``
+  fires when the video is finished.
 
 ``error``
-  fires when an error occurs
+  fires when an error occurs.

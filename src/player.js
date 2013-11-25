@@ -12,10 +12,11 @@ playjs.Player = function(elem, options){
 playjs.Player.EVENTS = {
   PLAY: 'play',
   PAUSE: 'pause',
-  FINISH: 'finish',
-  SEEK: 'seek',
-  PLAY_PROGRESS: 'playProgress',
-  LOAD_PROGRESS: 'loadProgress' // Not implemented yet.
+  ENDED: 'ended',
+  SEEKED: 'seeked',
+  TIMEUPDATE: 'timeupdate',
+  PROGRESS: 'progress', // Not implemented yet.
+  ERROR: 'error' // Not implemented yet.
 };
 
 playjs.Player.prototype.init = function(elem, options){
@@ -170,9 +171,9 @@ playjs.Player.prototype.pause = function(){
   });
 };
 
-playjs.Player.prototype.isPaused = function(callback, ctx){
+playjs.Player.prototype.getPaused = function(callback, ctx){
   this.send({
-    method: 'isPaused'
+    method: 'getPaused'
   }, callback, ctx);
 };
 
@@ -188,9 +189,9 @@ playjs.Player.prototype.unmute = function(){
   });
 };
 
-playjs.Player.prototype.isMuted = function(callback, ctx){
+playjs.Player.prototype.getMuted = function(callback, ctx){
   this.send({
-    method: 'isMuted'
+    method: 'getMuted'
   }, callback, ctx);
 };
 
@@ -213,9 +214,9 @@ playjs.Player.prototype.getDuration = function(callback, ctx){
   }, callback, ctx);
 };
 
-playjs.Player.prototype.seekTo = function(value){
+playjs.Player.prototype.setCurrentTime = function(value){
   this.send({
-    method: 'seekTo',
+    method: 'setCurrentTime',
     value: value
   });
 };
@@ -225,6 +226,21 @@ playjs.Player.prototype.getCurrentTime = function(callback, ctx){
     method: 'getCurrentTime'
   }, callback, ctx);
 };
+
+playjs.Player.prototype.setLoop = function(value){
+  this.send({
+    method: 'getLoop',
+    value: value
+  });
+};
+
+playjs.Player.prototype.getLoop = function(callback, ctx){
+  this.send({
+    method: 'getLoop'
+  }, callback, ctx);
+};
+
+
 
 //Set the global player.
 window.Player = function(elem, options){

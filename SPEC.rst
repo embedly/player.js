@@ -5,7 +5,8 @@ The goal of this document is to define a common message format for media hosted
 within iframes where the parent interacts with the child iframe via
 postMessage.
 
-This is based heavily off Vimeo's `JavaScript
+This is based heavily off the HTML5 Video `Spec
+<http://dev.w3.org/html5/spec-author-view/video.html>`_, Vimeo's `JavaScript
 API<https://developer.vimeo.com/player/js-api>`_, Soundclouds `Widget API
 <http://developers.soundcloud.com/docs/api/html5-widget>`_ and YouTube's
 `Player API https://developers.google.com/youtube/iframe_api_reference>`_.
@@ -149,7 +150,7 @@ Methods
       method: 'pause'
     }
 
-``isPaused``: boolean
+``getPaused``: boolean
   Determine if the media is paused::
 
     {
@@ -170,7 +171,7 @@ Methods
       method: 'unmute'
     }
 
-``isMuted``: boolean
+``getMuted``: boolean
   Determine if the media is muted::
 
     {
@@ -199,7 +200,7 @@ Methods
       method: 'getDuration',
     }
 
-``seekTo``: number
+``setCurrentTime``: number
   Perform a seek to a particular time in seconds::
 
     {
@@ -212,6 +213,22 @@ Methods
 
     {
       method: 'getCurrentTime',
+    }
+
+
+``setLoop``: boolean
+  Tell the media to loop continuously::
+
+    {
+      method: 'setLoop',
+      value: true
+    }
+
+``getLoop``: number
+  Return the loop attribute of the video::
+
+    {
+      method: 'getLoop',
     }
 
 
@@ -247,51 +264,98 @@ Events that can be listened to.
 
     {
       event: 'ready',
-      data: {
-        src: 'srcOfIframe'
+      value: {
+        src: 'srcOfIframe',
+        events: [
+          'event1'
+        ],
+        methods: [
+          'method1'
+        ]
       }
     }
 
 
-``loadProgress``
-  fires when the media is loading additional media for playback::
+  ``ready`` sets the stage for the rest of the interactions with the iframe.
+  There are a number of attributes in the value that helps us understand the
+  compatibility of the embed.
+
+  ``src``
+    Echos back the src of the iframe to let the frontend know which frame is
+    ready. If there are two iframes with the same source on the page, this will
+    not work as expected. We recommend randomizing one aspect of the src to
+    assure this does not happy. As an example, you can add a timestamp or a
+    uuid::
+
+      <iframe src="....&_=1385393930268"></iframe>
+
+    The ideal solution would be to set a playerID or another unique identifier.
+    However this would require building the iframe src, or reloading the iframe
+    after it's been rendered.
+
+  ``methods``
+    A list of the methods that the iframe media supports.
+
+  ``events``
+    A list of events that the iframe media supports.
+
+``progress``
+  Fires when the media is loading additional media for playback::
 
     {
-      event: 'playProgress',
-      data: {
+      event: 'progress',
+      value: {
         seconds: 10,
         duration: 40
       }
     }
 
-``playProgress``
-  fires during playback::
+``timeupdate``
+  Fires during playback::
 
     {
-      event: 'playProgress',
-      data: {
+      event: 'timeupdate',
+      value: {
         seconds: 10,
         duration: 40
       }
     }
 
 ``play``
-  fires when the video starts to play::
+  Fires when the video starts to play::
 
     {
       event: 'play',
     }
 
 ``pause``
-  fires when the video is paused::
+  Fires when the video is paused::
 
     {
-      event: 'play',
+      event: 'pause',
     }
 
-``finish``
-  fires when the video is finished::
+``ended``
+  Fires when the video has ended::
 
     {
-      event: 'finish',
+      event: 'ended',
     }
+
+``error``
+  Fires when something goes wrong::
+
+    {
+      event: 'error',
+      value: {
+        code: -1
+        msg: ""
+      }
+    }
+
+  ``code``
+    Default error codes are as follows:
+
+    * ``-1`` Undefined.
+    * ``1`` Playback not supported by device or browser.
+    * ``2`` Method not supported.

@@ -1,7 +1,8 @@
 /*globals asyncTest:true, ok:true, start:true, Player:true*/
 var FRAMES = [
   'src=http%3A%2F%2Fdistilleryvesper8-8.ak.instagram.com%2Fdc7cdbb2418811e3a4fc22000a1fc7c7_101.mp4&src_secure=1&url=http%3A%2F%2Finstagram.com%2Fp%2FgGZegnh9Sg%2F&image=http%3A%2F%2Fdistilleryimage8.ak.instagram.com%2Fdc7cdbb2418811e3a4fc22000a1fc7c7_8.jpg&type=video%2Fmp4&schema=instagram',
-  'src=https%3A%2F%2Fwww.youtube.com%2Fembed%2Fs_6I089_mrE&src_secure=1&url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Ds_6I089_mrE&image=http%3A%2F%2Fi1.ytimg.com%2Fvi%2Fs_6I089_mrE%2Fhqdefault.jpg&type=text%2Fhtml&schema=youtube',
+
+ 'src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FKYZIj0Nmdps&src_secure=1&url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DKYZIj0Nmdps&image=http%3A%2F%2Fi1.ytimg.com%2Fvi%2FKYZIj0Nmdps%2Fhqdefault.jpg&key=internal&type=text%2Fhtml&schema=youtube',
   'src=https%3A%2F%2Fplayer.vimeo.com%2Fvideo%2F18150336&src_secure=1&url=http%3A%2F%2Fvimeo.com%2F18150336&image=http%3A%2F%2Fb.vimeocdn.com%2Fts%2F117%2F311%2F117311910_1280.jpg&type=text%2Fhtml&schema=vimeo',
     'src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Furl%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F120478577%26auto_play%3Dfalse%26show_artwork%3Dtrue%26origin%3Dtwitter&src_secure=1&url=http%3A%2F%2Fsoundcloud.com%2Fkettelmusic%2Fhon&image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000062945914-gt5axz-t500x500.jpg%3F3eddc42&type=text%2Fhtml&schema=soundcloud'
 ];
@@ -18,7 +19,7 @@ function testCases(player){
       count ++;
       if (count === 2){
         // Revert us back to the opening bell.
-        player.seekTo(0);
+        player.setCurrentTime(0);
         player.pause();
         start();
       }
@@ -30,11 +31,11 @@ function testCases(player){
       done();
     });
 
-    player.on('playProgress', function(data){
+    player.on('timeupdate', function(data){
       ok(isNumber(data.seconds));
       ok(isNumber(data.duration));
 
-      player.off('playProgress');
+      player.off('timeupdate');
       done();
     });
 
@@ -46,7 +47,7 @@ function testCases(player){
       ok(true, "video has paused");
       player.off('pause');
       // Test if paused works.
-      player.isPaused(function(value){
+      player.getPaused(function(value){
         ok( true === value, "video is paused" );
         start();
       });
@@ -83,10 +84,10 @@ function testCases(player){
   });
 
   //Test Seek.
-  asyncTest("seekTo", 1, function() {
-    player.on('playProgress', function(v){
+  asyncTest("setCurrentTime", 1, function() {
+    player.on('timeupdate', function(v){
       if (v.seconds >= 5){
-        player.off('playProgress');
+        player.off('timeupdate');
         player.getCurrentTime(function(value){
           ok(Math.floor(value) === 5, "video has time:" + value );
           player.pause();
@@ -96,7 +97,7 @@ function testCases(player){
     });
 
     player.play();
-    player.seekTo(5);
+    player.setCurrentTime(5);
   });
 
   // Volumne tests
@@ -110,13 +111,13 @@ function testCases(player){
       player.mute();
 
       setTimeout(function(){
-        player.isMuted(function(value){
+        player.getMuted(function(value){
           ok(value, "video muted:" + value );
 
           //Unmute
           player.unmute();
           setTimeout(function(){
-            player.isMuted(function(value){
+            player.getMuted(function(value){
               ok(!value, "video unmuted:" + value );
               start();
 
@@ -152,7 +153,8 @@ var loadPlayers = function() {
 
 for (var f in FRAMES){
   var iframe = document.createElement('iframe');
-  iframe.src = 'http://cdn.embedly.com/widgets/media.html?' + FRAMES[f];
+  iframe.src = 'http://localhost.com:8000/dist/html/media.html?' + FRAMES[f];
+  //iframe.src = 'http://cdn.embedly.com/widgets/media.html?' + FRAMES[f];
   iframe.id = 'iframe_'+f;
   iframe.width = 200;
   iframe.height = 200;
