@@ -1,17 +1,17 @@
-/*globals playjs:true*/
+/*globals playerjs:true*/
 /*
 * Keeper is just a method for keeping track of all the callbacks.
 */
 
-playjs.Keeper = function(){
+playerjs.Keeper = function(){
   this.init();
 };
 
-playjs.Keeper.prototype.init = function(){
+playerjs.Keeper.prototype.init = function(){
   this.data = {};
 };
 
-playjs.Keeper.prototype.getUUID = function(){
+playerjs.Keeper.prototype.getUUID = function(){
   // Create a random id. #http://stackoverflow.com/a/2117523/564191
   return 'listener-xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
@@ -19,12 +19,12 @@ playjs.Keeper.prototype.getUUID = function(){
   });
 };
 
-playjs.Keeper.prototype.has = function(event, id){
+playerjs.Keeper.prototype.has = function(event, id){
   if (!this.data.hasOwnProperty(event)){
     return false;
   }
 
-  if (playjs.isNone(id)){
+  if (playerjs.isNone(id)){
     return true;
   }
 
@@ -40,7 +40,7 @@ playjs.Keeper.prototype.has = function(event, id){
   return false;
 };
 
-playjs.Keeper.prototype.add = function(id, event, cb, ctx, one){
+playerjs.Keeper.prototype.add = function(id, event, cb, ctx, one){
   var d = {
     id: id,
     event: event,
@@ -56,7 +56,7 @@ playjs.Keeper.prototype.add = function(id, event, cb, ctx, one){
   }
 };
 
-playjs.Keeper.prototype.execute = function(event, id, data){
+playerjs.Keeper.prototype.execute = function(event, id, data){
   if (!this.has(event, id)){
     return false;
   }
@@ -67,7 +67,7 @@ playjs.Keeper.prototype.execute = function(event, id, data){
   for (var i=0; i< this.data[event].length; i++){
     var d = this.data[event][i];
 
-    if (!playjs.isNone(id) && d.id !== id){
+    if (!playerjs.isNone(id) && d.id !== id){
       continue;
     }
 
@@ -96,15 +96,15 @@ playjs.Keeper.prototype.execute = function(event, id, data){
   }
 };
 
-playjs.Keeper.prototype.on = function(id, event, cb, ctx){
+playerjs.Keeper.prototype.on = function(id, event, cb, ctx){
   this.add(id, event, cb, ctx, false);
 };
 
-playjs.Keeper.prototype.one = function(id, event, cb, ctx){
+playerjs.Keeper.prototype.one = function(id, event, cb, ctx){
   this.add(id, event, cb, ctx, true);
 };
 
-playjs.Keeper.prototype.off = function(event, cb){
+playerjs.Keeper.prototype.off = function(event, cb){
   // We should probably restructure so this is a bit less of a pain.
   var listeners = [];
 
@@ -118,9 +118,9 @@ playjs.Keeper.prototype.off = function(event, cb){
   for (var i=0; i< this.data[event].length; i++){
     var data = this.data[event][i];
     // If we only keep if there was a CB and the CB is there.
-    if (!playjs.isNone(cb) && data.cb !== cb) {
+    if (!playerjs.isNone(cb) && data.cb !== cb) {
       keep.push(data);
-    } else if (!playjs.isNone(data.id)) {
+    } else if (!playerjs.isNone(data.id)) {
       listeners.push(data.id);
     }
   }

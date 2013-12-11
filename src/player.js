@@ -1,15 +1,15 @@
-/*globals playjs:true*/
+/*globals playerjs:true*/
 /*
 * Player.js is a javascript library for interacting with iframes via
 * postMessage that use an Open Player Spec
 *
 */
 
-playjs.Player = function(elem, options){
+playerjs.Player = function(elem, options){
   this.init(elem, options);
 };
 
-playjs.Player.EVENTS = {
+playerjs.EVENTS = {
   PLAY: 'play',
   PAUSE: 'pause',
   ENDED: 'ended',
@@ -19,36 +19,55 @@ playjs.Player.EVENTS = {
   ERROR: 'error' // Not implemented yet.
 };
 
-playjs.Player.prototype.init = function(elem, options){
+playerjs.METHODS = [
+  'play',
+  'pause',
+  'getPaused',
+  'mute',
+  'unmute',
+  'getMuted',
+  'setVolume',
+  'getVolume',
+  'getDuration',
+  'setCurrentTime',
+  'getCurrentTime',
+  'setLoop',
+  'getLoop',
+  'removeEventListener',
+  'addEventListener'
+];
 
-  if (playjs.isString(elem)){
+
+playerjs.Player.prototype.init = function(elem, options){
+
+  if (playerjs.isString(elem)){
     elem = document.getElementById(elem);
   }
 
   this.elem = elem;
 
   // Figure out the origin of where we are sending messages.
-  this.origin = playjs.origin(elem.src);
+  this.origin = playerjs.origin(elem.src);
 
   // Event handling.
-  this.keeper = new playjs.Keeper();
+  this.keeper = new playerjs.Keeper();
 
   // Queuing before ready.
   this.isReady = false;
   this.queue = [];
 
-  if (playjs.POST_MESSAGE){
+  if (playerjs.POST_MESSAGE){
     // Set up the reciever.
     var self = this;
-    playjs.addEvent(window, 'message', function(e){
+    playerjs.addEvent(window, 'message', function(e){
       self.receive(e);
     });
   } else {
-    playjs.log('Post Message is not Available.');
+    playerjs.log('Post Message is not Available.');
   }
 };
 
-playjs.Player.prototype.send = function(data, callback, ctx){
+playerjs.Player.prototype.send = function(data, callback, ctx){
   // We are expecting a response.
   if (callback) {
     // Create a UUID
@@ -61,19 +80,19 @@ playjs.Player.prototype.send = function(data, callback, ctx){
     this.keeper.one(id, data.method, callback, ctx);
   }
 
-  if (!this.isReady && data.event !== 'ready'){
-    playjs.log('Player.queue', data);
+  if (!this.isReady && data.value !== 'ready'){
+    playerjs.log('Player.queue', data);
     this.queue.push(data);
     return false;
   }
 
-  playjs.log('Player.send', data, this.origin);
+  playerjs.log('Player.send', data, this.origin);
   this.elem.contentWindow.postMessage(JSON.stringify(data), this.origin);
   return true;
 };
 
-playjs.Player.prototype.receive = function(e){
-  playjs.log('Player.receive', e);
+playerjs.Player.prototype.receive = function(e){
+  playerjs.log('Player.receive', e);
 
   if (e.origin !== this.origin){
     return false;
@@ -98,7 +117,7 @@ playjs.Player.prototype.receive = function(e){
 };
 
 
-playjs.Player.prototype.ready = function(){
+playerjs.Player.prototype.ready = function(){
 
   if (this.isReady === true){
     return false;
@@ -111,7 +130,7 @@ playjs.Player.prototype.ready = function(){
   for (var i=0; i<this.queue.length; i++){
     var data = this.queue[i];
 
-    playjs.log('Player.dequeue', data);
+    playerjs.log('Player.dequeue', data);
 
     if (data.event === 'ready'){
       this.keeper.execute(data.event, data.listener, true);
@@ -121,7 +140,7 @@ playjs.Player.prototype.ready = function(){
   this.queue = [];
 };
 
-playjs.Player.prototype.on = function(event, callback, ctx){
+playerjs.Player.prototype.on = function(event, callback, ctx){
   var id = this.keeper.getUUID();
 
   if (event === 'ready'){
@@ -133,23 +152,23 @@ playjs.Player.prototype.on = function(event, callback, ctx){
 
   this.send({
     method: 'addEventListener',
-    event: event,
+    value: event,
     listener: id
   });
 
   return true;
 };
 
-playjs.Player.prototype.off = function(event, callback){
+playerjs.Player.prototype.off = function(event, callback){
 
   var listeners = this.keeper.off(event, callback);
-  playjs.log('Player.off', listeners);
+  playerjs.log('Player.off', listeners);
 
   if (listeners.length > 0) {
     for (var i in listeners){
       this.send({
         method: 'removeEventListener',
-        event: event,
+        value: event,
         listener: listeners[i]
       });
       return true;
@@ -159,90 +178,85 @@ playjs.Player.prototype.off = function(event, callback){
   return false;
 };
 
-playjs.Player.prototype.play = function(){
+playerjs.Player.prototype.play = function(){
   this.send({
     method: 'play'
   });
 };
 
-playjs.Player.prototype.pause = function(){
+playerjs.Player.prototype.pause = function(){
   this.send({
     method: 'pause'
   });
 };
 
-playjs.Player.prototype.getPaused = function(callback, ctx){
+playerjs.Player.prototype.getPaused = function(callback, ctx){
   this.send({
     method: 'getPaused'
   }, callback, ctx);
 };
 
-playjs.Player.prototype.mute = function(){
+playerjs.Player.prototype.mute = function(){
   this.send({
     method: 'mute'
   });
 };
 
-playjs.Player.prototype.unmute = function(){
+playerjs.Player.prototype.unmute = function(){
   this.send({
     method: 'unmute'
   });
 };
 
-playjs.Player.prototype.getMuted = function(callback, ctx){
+playerjs.Player.prototype.getMuted = function(callback, ctx){
   this.send({
     method: 'getMuted'
   }, callback, ctx);
 };
 
-playjs.Player.prototype.getVolume = function(callback, ctx){
+playerjs.Player.prototype.getVolume = function(callback, ctx){
   this.send({
     method: 'getVolume'
   }, callback, ctx);
 };
 
-playjs.Player.prototype.setVolume = function(value){
+playerjs.Player.prototype.setVolume = function(value){
   this.send({
     method: 'setVolume',
     value: value
   });
 };
 
-playjs.Player.prototype.getDuration = function(callback, ctx){
+playerjs.Player.prototype.getDuration = function(callback, ctx){
   this.send({
     method: 'getDuration'
   }, callback, ctx);
 };
 
-playjs.Player.prototype.setCurrentTime = function(value){
+playerjs.Player.prototype.setCurrentTime = function(value){
   this.send({
     method: 'setCurrentTime',
     value: value
   });
 };
 
-playjs.Player.prototype.getCurrentTime = function(callback, ctx){
+playerjs.Player.prototype.getCurrentTime = function(callback, ctx){
   this.send({
     method: 'getCurrentTime'
   }, callback, ctx);
 };
 
-playjs.Player.prototype.setLoop = function(value){
+playerjs.Player.prototype.setLoop = function(value){
   this.send({
     method: 'getLoop',
     value: value
   });
 };
 
-playjs.Player.prototype.getLoop = function(callback, ctx){
+playerjs.Player.prototype.getLoop = function(callback, ctx){
   this.send({
     method: 'getLoop'
   }, callback, ctx);
 };
 
-
-
-//Set the global player.
-window.Player = function(elem, options){
-  return new playjs.Player(elem, options);
-};
+window.playerjs = playerjs;

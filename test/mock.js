@@ -1,87 +1,79 @@
-// We need to create a mock iframe for testing proposes.
+/*globals playerjs:true*/
 
-var eventListeners = {};
+//playerjs.DEBUG = true;
+var receiver = new playerjs.Receiver();
+receiver.ready();
 
-var addEvent = function(elem, type, eventHandle) {
-  if (!elem) { return; }
-  if ( elem.addEventListener ) {
-    elem.addEventListener( type, eventHandle, false );
-  } else if ( elem.attachEvent ) {
-    elem.attachEvent( "on" + type, eventHandle );
-  } else {
-    elem["on"+type]=eventHandle;
+var video = {
+  duration: 20,
+  currentTime: 0,
+  interval: null,
+  timeupdate: function(){},
+  volume: 100,
+  mute: false,
+  playing: false,
+  play: function(){
+    video.interval = setInterval(function(){
+      video.currentTime += 0.25;
+      video.timeupdate({
+        seconds: video.currentTime,
+        duration: video.duration
+      });
+    }, 250);
+    video.playing = true;
+  },
+  pause: function(){
+    clearInterval(video.interval);
+    video.playing = false;
   }
 };
 
-var send = function(data, listener){
-  if (listener) {
-    data.listener = listener;
-  }
-
-  window.parent.postMessage(JSON.stringify(data), '*');
-};
-
-var emit = function(event, data){
-  if (!eventListeners.hasOwnProperty(event)){
-    return false;
-  }
-
-  var listeners = eventListeners[event];
-  for(var i = 0; i< listeners.length; i++){
-    var l = listeners[i];
-    var d = {
-      event: event
-    };
-    if (l.listener){
-      d.listener = l.listener;
-    }
-    if (data){
-      d.data = l.data;
-    }
-    send(d);
-  }
-};
-
-addEvent(window, 'message', function(e){
-  var data = JSON.parse(e.data);
-
-  if (data.method === 'addEventListener'){
-    if (eventListeners.hasOwnProperty(data.event)){
-      eventListeners[data.event].push(data);
-    } else {
-      eventListeners[data.event] = [data];
-    }
-  }
-
-  switch (data.method) {
-    case 'play':
-      emit('play');
-      emit('playProgress', {seconds: 20, duration:100});
-      break;
-    case 'pause':
-      emit('pause');  break;
-    case 'paused':
-      send({
-        event: 'paused',
-        value: true
-      }, data.listener);  break;
-    case 'getDuration':
-      send({
-        event: 'getDuration',
-        value: 100
-      }, data.listener);  break;
-    case 'getVolume':
-      send({
-        event: 'getVolume',
-        value: 90
-      }, data.listener);  break;
-    case 'getCurrentTime':
-      send({
-        event: 'getCurrentTime',
-        value: 10.1
-      }, data.listener);  break;
-  }
+receiver.on('play', function(){
+  var self = this;
+  video.play();
+  this.emit('play');
+  video.timeupdate = function(data){
+    self.emit('timeupdate', data);
+  };
 });
 
+receiver.on('pause', function(){
+  video.pause();
+  this.emit('pause');
+});
 
-send({method:'isReady', event:'ready'});
+receiver.on('getPaused', function(callback){
+  callback(!video.playing);
+});
+
+receiver.on('getCurrentTime', function(callback){
+  callback(video.currentTime);
+});
+
+receiver.on('setCurrentTime', function(value){
+  video.currentTime = value;
+});
+
+receiver.on('getDuration', function(callback){
+  callback(video.duration);
+});
+
+receiver.on('getVolume', function(callback){
+  callback(video.volume);
+});
+
+receiver.on('setVolume', function(value){
+  video.volume = value;
+});
+
+receiver.on('mute', function(){
+  video.mute = true;
+});
+
+receiver.on('unmute', function(){
+  video.mute = false;
+});
+
+receiver.on('getMuted', function(callback){
+  callback(video.mute);
+});

@@ -1,10 +1,12 @@
-/*globals asyncTest:true, ok:true, start:true, Player:true*/
+/*globals asyncTest:true, ok:true, start:true, playerjs:true*/
 var FRAMES = [
   'src=http%3A%2F%2Fdistilleryvesper8-8.ak.instagram.com%2Fdc7cdbb2418811e3a4fc22000a1fc7c7_101.mp4&src_secure=1&url=http%3A%2F%2Finstagram.com%2Fp%2FgGZegnh9Sg%2F&image=http%3A%2F%2Fdistilleryimage8.ak.instagram.com%2Fdc7cdbb2418811e3a4fc22000a1fc7c7_8.jpg&type=video%2Fmp4&schema=instagram',
 
- 'src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FKYZIj0Nmdps&src_secure=1&url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DKYZIj0Nmdps&image=http%3A%2F%2Fi1.ytimg.com%2Fvi%2FKYZIj0Nmdps%2Fhqdefault.jpg&key=internal&type=text%2Fhtml&schema=youtube',
+'src=https%3A%2F%2Fwww.youtube.com%2Fembed%2FKYZIj0Nmdps&src_secure=1&url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DKYZIj0Nmdps&image=http%3A%2F%2Fi1.ytimg.com%2Fvi%2FKYZIj0Nmdps%2Fhqdefault.jpg&key=internal&type=text%2Fhtml&schema=youtube',
   'src=https%3A%2F%2Fplayer.vimeo.com%2Fvideo%2F18150336&src_secure=1&url=http%3A%2F%2Fvimeo.com%2F18150336&image=http%3A%2F%2Fb.vimeocdn.com%2Fts%2F117%2F311%2F117311910_1280.jpg&type=text%2Fhtml&schema=vimeo',
-    'src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Furl%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F120478577%26auto_play%3Dfalse%26show_artwork%3Dtrue%26origin%3Dtwitter&src_secure=1&url=http%3A%2F%2Fsoundcloud.com%2Fkettelmusic%2Fhon&image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000062945914-gt5axz-t500x500.jpg%3F3eddc42&type=text%2Fhtml&schema=soundcloud'
+    'src=https%3A%2F%2Fw.soundcloud.com%2Fplayer%2F%3Furl%3Dhttp%253A%252F%252Fapi.soundcloud.com%252Ftracks%252F120478577%26auto_play%3Dfalse%26show_artwork%3Dtrue%26origin%3Dtwitter&src_secure=1&url=http%3A%2F%2Fsoundcloud.com%2Fkettelmusic%2Fhon&image=http%3A%2F%2Fi1.sndcdn.com%2Fartworks-000062945914-gt5axz-t500x500.jpg%3F3eddc42&type=text%2Fhtml&schema=soundcloud',
+  'http://localhost.com:8003/test/iframe.html'
+
 ];
 
 
@@ -142,7 +144,7 @@ var loadPlayers = function() {
   if (count === FRAMES.length){
     var iframes = document.getElementsByTagName('iframe');
     for (var d=0; d<iframes.length; d++){
-      var player = Player(iframes[d]);
+      var player = new playerjs.Player(iframes[d]);
       player.on('ready', function(){
         testCases(this);
       }, player);
@@ -153,7 +155,13 @@ var loadPlayers = function() {
 
 for (var f in FRAMES){
   var iframe = document.createElement('iframe');
-  iframe.src = 'http://localhost.com:8000/dist/html/media.html?' + FRAMES[f];
+
+  if (FRAMES[f].substr(0,4) === 'http'){
+    iframe.src = FRAMES[f];
+  } else {
+    iframe.src = 'http://localhost.com:8000/dist/html/media.html?' + FRAMES[f];
+  }
+
   //iframe.src = 'http://cdn.embedly.com/widgets/media.html?' + FRAMES[f];
   iframe.id = 'iframe_'+f;
   iframe.width = 200;

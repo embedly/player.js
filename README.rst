@@ -36,9 +36,9 @@ player object. However, the player will internally queue messages until
 ready is called.
 ::
 
-  var player = Player('iframe');
+  var player = new playerjs.Player('iframe');
 
-  player.on(Player.Events.PLAY, function(
+  player.on(playerjs.Events.PLAY, function(
     console.log('play');
   ));
 
