@@ -5,7 +5,7 @@ A JavaScript library for interacting with iframes that support Player.js spec.
 
 ::
 
-  var player = Player('iframe');
+  var player = new playerjs.Player('iframe');
 
   player.on('ready', function(){
     player.on('play', function(){
@@ -25,7 +25,7 @@ Install
 Player.js is hosted on Embedly's CDN.
 ::
 
-  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.2.min.js"></script>
+  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.3.min.js"></script>
 
 
 Ready
