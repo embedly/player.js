@@ -176,16 +176,19 @@ playerjs.Receiver.prototype.emit = function(event, value){
     var listener = this.eventListeners[event][i];
     this.send(event, value, listener);
   }
+  
+  return true;
 };
-
 
 playerjs.Receiver.prototype.ready = function(){
   playerjs.log('Receiver.ready');
   this.isReady = true;
-  this.emit('ready', {
+  
+  var data = {
     src: window.location.toString()
-  });
+  };
+  
+  if (!this.emit('ready', data)){
+    this.send('ready', data);
+  }
 };
-
-
-

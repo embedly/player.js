@@ -40,6 +40,8 @@ playerjs.METHODS = [
 
 playerjs.Player.prototype.init = function(elem, options){
 
+  var self = this;
+
   if (playerjs.isString(elem)){
     elem = document.getElementById(elem);
   }
@@ -58,13 +60,17 @@ playerjs.Player.prototype.init = function(elem, options){
 
   if (playerjs.POST_MESSAGE){
     // Set up the reciever.
-    var self = this;
     playerjs.addEvent(window, 'message', function(e){
       self.receive(e);
     });
   } else {
     playerjs.log('Post Message is not Available.');
   }
+  
+  // Try the onload event, just lets us give another test.
+  this.elem.onload = function(){
+    self.loaded = true;
+  };
 };
 
 playerjs.Player.prototype.send = function(data, callback, ctx){
@@ -87,7 +93,11 @@ playerjs.Player.prototype.send = function(data, callback, ctx){
   }
 
   playerjs.log('Player.send', data, this.origin);
-  this.elem.contentWindow.postMessage(JSON.stringify(data), this.origin);
+  
+  if (this.loaded === true){
+    this.elem.contentWindow.postMessage(JSON.stringify(data), this.origin);
+  }
+
   return true;
 };
 
@@ -125,6 +135,7 @@ playerjs.Player.prototype.ready = function(){
 
   // set ready.
   this.isReady = true;
+  this.loaded = true;
 
   // Clear the queue
   for (var i=0; i<this.queue.length; i++){
