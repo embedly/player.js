@@ -168,6 +168,11 @@ for (var f in FRAMES){
   iframe.height = 200;
 
   document.body.appendChild(iframe);
-  
-  loadPlayers();
+
+  // we want to load the players a couple of different ways.
+  if ( f % 2 === 1){
+    loadPlayers();
+  } else {
+    iframe.onload = loadPlayers;
+  }
 }

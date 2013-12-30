@@ -37,6 +37,7 @@ playerjs.METHODS = [
   'addEventListener'
 ];
 
+playerjs.READIED = [];
 
 playerjs.Player.prototype.init = function(elem, options){
 
@@ -66,11 +67,16 @@ playerjs.Player.prototype.init = function(elem, options){
   } else {
     playerjs.log('Post Message is not Available.');
   }
-  
-  // Try the onload event, just lets us give another test.
-  this.elem.onload = function(){
+
+  // See if we caught the src event first, otherwise assume we haven't loaded
+  if (playerjs.READIED.indexOf(elem.src) > -1){
     self.loaded = true;
-  };
+  } else {
+    // Try the onload event, just lets us give another test.
+    this.elem.onload = function(){
+      self.loaded = true;
+    };
+  }
 };
 
 playerjs.Player.prototype.send = function(data, callback, ctx){
@@ -93,7 +99,7 @@ playerjs.Player.prototype.send = function(data, callback, ctx){
   }
 
   playerjs.log('Player.send', data, this.origin);
-  
+
   if (this.loaded === true){
     this.elem.contentWindow.postMessage(JSON.stringify(data), this.origin);
   }
@@ -271,3 +277,19 @@ playerjs.Player.prototype.getLoop = function(callback, ctx){
 };
 
 window.playerjs = playerjs;
+
+// We need to catch all ready events in case the iframe is ready before the
+// player is invoked.
+playerjs.addEvent(window, 'message', function(e){
+  var data;
+  try {
+    data = JSON.parse(e.data);
+  } catch (err){
+    return false;
+  }
+
+  // We need to determine if we are ready.
+  if (data.event === 'ready' && data.value.src){
+    playerjs.READIED.push(data.value.src);
+  }
+});

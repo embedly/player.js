@@ -25,7 +25,7 @@ Install
 Player.js is hosted on Embedly's CDN.
 ::
 
-  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.4.min.js"></script>
+  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.5.min.js"></script>
 
 
 Ready
@@ -46,6 +46,48 @@ ready is called.
     player.setCurrentTime(20);
   });
 
+
+Timing
+------
+The timing between when the iframe is added and when the ready event is fired
+is important. Sadly we cannot fire the ready event till the iframe is loaded,
+but there is no concrete way of telling when postmessage is available to us.
+
+The best way is to do one of the following.
+
+Create the iframe via JavaScript
+""""""""""""""""""""""""""""""""
+::
+
+  var iframe = document.createElement('iframe');
+  iframe.src = 'https://example.com/iframe';
+  document.body.appendChild(iframe);
+
+  var player = new playerjs.Player(iframe);
+
+In this case, Player.js will listen to the onload event of the iframe and only
+try to communicate when ready.
+
+Wait for the document to be ready.
+""""""""""""""""""""""""""""""""""
+::
+
+  <iframe src="//example.com/iframe"></iframe>
+
+  <script>
+    $(document).on('ready', function(){
+      $('iframes').each(function(){
+        var player = new playerjs.Player(this);
+        player.on('ready', funciton(){
+          player.play();
+        });
+      });
+    });
+  </script>
+
+At this point we can reasonably assume that the iframe's been loaded and the
+ready. Player.js will take care of listening for ready events that were fired
+before the player is set up.
 
 
 Methods
@@ -170,3 +212,69 @@ Events that can be listened to.
 
 ``error``
   fires when an error occurs.
+
+
+Receiver
+--------
+If you are looking to implement the Player.js spec, we include a Receiver that
+will allow you to easily listen to events and takes care of the house keeping.
+
+::
+
+  var receiver = new playerjs.Receiver();
+
+  receiver.on('play', function(){
+    video.play();
+    receiver.emit('play');
+  });
+
+  receiver.on('pause', function(){
+    video.pause();
+    receiver.emit('pause');
+  });
+
+  receiver.on('getDuration', function(callback){
+    callback(video.duration);
+  });
+
+  video.addEventListener('timeupdate', function(){
+    receiver.emit('timeupdate', {
+      seconds: video.currentTime,
+      duration: video.duration
+    });
+  });
+
+  receiver.ready();
+
+
+Methods
+-------
+
+``on``
+  Requests an event from the video. The above player methods should be
+  implemented. If the event expects a return value a callback will be passed
+  into the function call::
+
+    receiver.on('getDuration', function(callback){
+      callback(video.duration);
+    });
+
+  Otherwise you can safely ignore any inputs::
+
+    receiver.on('play', function(callback){
+      video.play();
+    });
+
+``emit``
+  Sends events to the parent as long as someone is listing. The above player
+  events should be implemented. If a value is expected, it should be passed in
+  as the second argument::
+
+    receiver.emit('timeupdate', {seconds:20, duration:40});
+
+``ready``
+  Once everything is in place and you are ready to start responding to events,
+  call this method. It performs some house keeping, along with emitting
+  ``ready``::
+
+    receiver.ready();

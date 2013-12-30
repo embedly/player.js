@@ -7,9 +7,9 @@ postMessage.
 
 This is based heavily off the HTML5 Video `Spec
 <http://dev.w3.org/html5/spec-author-view/video.html>`_, Vimeo's `JavaScript
-API<https://developer.vimeo.com/player/js-api>`_, Soundclouds `Widget API
+API <https://developer.vimeo.com/player/js-api>`_, Soundclouds `Widget API
 <http://developers.soundcloud.com/docs/api/html5-widget>`_ and YouTube's
-`Player API https://developers.google.com/youtube/iframe_api_reference>`_.
+`Player API <https://developers.google.com/youtube/iframe_api_reference>`_.
 
 
 Why
@@ -21,6 +21,15 @@ The most common use case is for video and audio hosted within iframes. The
 parent page would like to play/pause or listen to progress of the media. We
 make this available via a common set of json that is passed back between the
 parent and the child.
+
+
+License
+-------
+This specification is licensed under the Creative Commons Attribution License.
+You can learn more about the license `here
+<http://creativecommons.org/licenses/by-nd/4.0/>`_. The more people that refine
+this Spec, the better, so we tried to pick the least restrictive license we
+could.
 
 
 Support
@@ -67,6 +76,7 @@ They have a common format::
 
 If the method is a getter, i.e. ``getDuration`` the child frame will send the
 following message to the parent.
+::
 
   {
     event: 'methodName',
@@ -81,7 +91,7 @@ The child frame will often fire a number of events, such as ``play``,
 ``finish`` and ``playProgress``. This defines what is passed back.
 
 No events should be passed back unless the parent explicitly asks for them. To
-add a listener we send the following message.
+add a listener we send the following message::
 
   {
     method: 'addEventListener',
@@ -101,37 +111,38 @@ When the event is fired, the parent will receive the following event data::
 Client
 ------
 It's helpful to have a quick example of the JavaScript before moving forward.
+::
 
-// Play the video
-document.getElementById('#iframe').contentWindow.postMessage(
-  JSON.stringify({
-    method: 'play'
-  })
-);
+  // Play the video
+  document.getElementById('#iframe').contentWindow.postMessage(
+    JSON.stringify({
+      method: 'play'
+    })
+  );
 
-// Set up an event listener.
+  // Set up an event listener.
 
-var iframe = document.getElementById('#iframe'),
-  origin = iframe.src.split('/', 3).join('/');
+  var iframe = document.getElementById('#iframe'),
+    origin = iframe.src.split('/', 3).join('/');
 
-var play = function(){
-  console.log('play);
-};
+  var play = function(){
+    console.log('play);
+  };
 
-window.addEventListener('message', function(){
-  if (e.origin === origin){
-    if (e.event === play){
-      played();
+  window.addEventListener('message', function(){
+    if (e.origin === origin){
+      if (e.event === play){
+        played();
+      }
     }
-  }
-});
+  });
 
-iframe.contentWindow.postMessage(
-  JSON.stringify({
-    method: 'addEventListener',
-    value: 'event'
-  })
-);
+  iframe.contentWindow.postMessage(
+    JSON.stringify({
+      method: 'addEventListener',
+      value: 'event'
+    })
+  );
 
 
 Methods
