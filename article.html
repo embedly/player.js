@@ -1,0 +1,118 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player.js</title>
+    <meta name="description" content="A library for programically interfacing with Embeds.">
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <script src="scripts/libs/modernizr.js"></script>
+    <style>
+    .progress {
+      border: none;
+      padding: 0;
+      height: 5px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+    }
+    .meter {
+      width:0%;
+
+    }
+    .row {
+      margin-top:20px;
+    }
+    .actions{
+      position: fixed;
+      top: 5px;
+      right: 6px;
+      z-index: 100;
+    }
+    </style>
+  </head>
+
+  <div class="row">
+    <div class="large-4 columns">
+      <h3>Stats</h3>
+      <ul>
+        <li>Plays: <span id="play">0</span></li>
+        <li>Pause: <span id="pause">0</span></li>
+        <li>Duration: <span id="duration">0</span></li>
+        <li>Finished: <span id="finsh">0</span></li>
+      </ul>
+    </div>
+    <div class="large-6 columns">
+      <h1>An Intro to Video</h1>
+      <p>
+    Curabitur interdum, mi at egestas ornare, massa tortor sollicitudin orci, ut vestibulum nisl odio sed sem. Proin sit amet risus est. Donec et fermentum nibh. Ut accumsan tempor congue. Nunc sed gravida elit, non laoreet sapien. Sed quam nisl, eleifend quis volutpat eget, sagittis sed lacus. Phasellus mollis mi a turpis consequat sollicitudin quis vel leo. Vestibulum vel sapien eu urna vehicula varius sed nec est. In in nisl in nisl faucibus vulputate. Morbi dapibus iaculis erat, eleifend venenatis elit facilisis in. Morbi in vestibulum odio. Phasellus sed metus posuere, iaculis sapien ultricies, feugiat enim. Maecenas semper justo nec nulla adipiscing, vitae congue erat rutrum.
+      </p>
+    </div>
+    <div class="large-2 columns"></div>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="flex-video widescreen vimeo">
+        <iframe class="embedly-embed" src="//cdn.embedly.com/widgets/media.html?src=http%3A%2F%2Fplayer.vimeo.com%2Fvideo%2F83513993&url=http%3A%2F%2Fvimeo.com%2F83513993&image=http%3A%2F%2Fb.vimeocdn.com%2Fts%2F460%2F017%2F460017876_1280.jpg&key=internal&type=text%2Fhtml&schema=vimeo" width="500" height="281" scrolling="no" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-6 columns large-offset-2">
+      <p>
+        Nullam quis lacinia risus. Morbi quis enim fringilla, pulvinar dui tincidunt, fermentum neque. Cras sit amet odio et orci pellentesque luctus vel vitae eros. Morbi dignissim suscipit convallis. Nullam quis malesuada dolor. Suspendisse egestas consequat nulla eget blandit. Cras accumsan nunc rutrum purus eleifend imperdiet eu ac ligula. Maecenas ut nisi nulla. Nunc vel lacus velit. Integer dignissim tempus eros imperdiet gravida.
+      </p>
+      <p>
+        Etiam at eros sapien. Aenean ut metus in tellus tempor semper a blandit leo. Nunc eu sapien vitae lectus aliquet pellentesque. Praesent semper nisi eu rutrum tempus. Praesent in vehicula est. Cras in ullamcorper orci. Phasellus aliquam odio in pharetra euismod. Curabitur sit amet diam volutpat, convallis neque ut, consequat magna. Duis venenatis egestas tellus, sit amet posuere erat feugiat vitae. Nulla ut elit non eros pulvinar vestibulum. Donec pretium eget lacus ut volutpat. Etiam sed tristique diam. Suspendisse id blandit ipsum.
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="flex-video widescreen vimeo">
+        <iframe class="embedly-embed" src="//cdn.embedly.com/widgets/media.html?src=http%3A%2F%2Fplayer.vimeo.com%2Fvideo%2F83907617&url=http%3A%2F%2Fvimeo.com%2F83907617&image=http%3A%2F%2Fb.vimeocdn.com%2Fts%2F460%2F600%2F460600718_1280.jpg&key=internal&type=text%2Fhtml&schema=vimeo" width="500" height="250" scrolling="no" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="large-6 columns large-offset-4">
+      <p>
+        Phasellus et luctus metus, nec pharetra justo. Suspendisse laoreet quis nulla non eleifend. Nullam rutrum, augue et tincidunt dignissim, nulla diam scelerisque massa, vitae consequat erat risus vel nibh. Maecenas vel erat a ante mattis euismod. Proin vel adipiscing ligula. Aliquam erat volutpat. Vestibulum nec neque sollicitudin magna hendrerit sollicitudin eu eu mauris. Etiam non congue felis, quis elementum mauris. Ut mauris nulla, viverra non nulla id, scelerisque laoreet metus. Donec porttitor vehicula auctor. Phasellus vitae massa tempus, accumsan ligula at, pellentesque nunc. Maecenas rhoncus sollicitudin vestibulum. Vestibulum elementum quis nisl quis venenatis. Vivamus tempus nec justo tincidunt facilisis. Donec sit amet lacus eros.
+      </p>
+      <p>
+        Nulla bibendum vitae dolor at suscipit. Nam non tincidunt magna. Donec risus tellus, pulvinar sed lectus at, tincidunt gravida erat. Maecenas porta lorem in mattis varius. Vestibulum mattis nulla arcu. In lobortis mi id enim adipiscing malesuada. Morbi aliquam auctor nisl nec pretium. Nunc posuere mattis augue eget laoreet. Vivamus venenatis et urna nec luctus. Maecenas consectetur magna eu est ullamcorper accumsan. Phasellus sodales turpis vehicula, ornare turpis et, tristique diam.
+      </p>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="large-12 columns">
+      <div class="flex-video vimeo">
+        <iframe class="embedly-embed" src="//cdn.embedly.com/widgets/media.html?src=http%3A%2F%2Fwww.youtube.com%2Fembed%2FVKHV0LLvhXM%3Ffeature%3Doembed&url=http%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DVKHV0LLvhXM&image=http%3A%2F%2Fi1.ytimg.com%2Fvi%2FVKHV0LLvhXM%2Fhqdefault.jpg&key=internal&type=text%2Fhtml&schema=youtube" width="500" height="281" scrolling="no" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script src="scripts/libs/jquery.js"></script>
+  <script src="scripts/libs/foundation.min.js"></script>
+  <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
+  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.5.min.js"></script>
+  <script src="scripts/article.js"></script>
+  <script>
+    $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';
+    $(document).foundation();
+  </script>
+  </body>
+</html>
