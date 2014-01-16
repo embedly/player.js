@@ -15,7 +15,7 @@
 
       player.on('play', $.proxy(function(){
         $('#play').text(parseInt($('#play').text(), 10)+1);
-
+        $('title').text('\u25b6 '+ $('title').text());
         var src = this.elem.src;
         $.each(players, function(i, p){
           if (p.elem.src !== src){
@@ -26,6 +26,8 @@
 
       player.on('pause', function(){
         $('#pause').text(parseInt($('#pause').text(), 10)+1);
+        $('title').text($('title').text().substr(2));
+
       });
 
       player.on('finish', function(){
