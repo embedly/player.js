@@ -1,0 +1,52 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player.js</title>
+    <meta name="description" content="A library for programically interfacing with Embeds.">
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <script src="scripts/libs/modernizr.js"></script>
+    <style>
+      #caption {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        z-index: 200;
+        background: #fff;
+        padding: 10px;
+        display:none;
+      }
+    </style>
+  </head>
+
+  <div class="row">
+    <div class="large-8 columns large-centered">
+      <form id="urlForm">
+        <label>Url</label>
+        <input id="url" type="text" value="http://www.youtube.com/watch?v=6tEN4tW9tzo"/>
+      </form>
+
+      <div id="result"></div>
+
+      <div id="captions">
+        <form></form>
+      </div>
+      <div class="text-right">
+        <a href="#" id="add"><i class="fa fa-plus"></i></a>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/libs/jquery.js"></script>
+  <script src="scripts/libs/foundation.min.js"></script>
+  <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
+  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.5.min.js"></script>
+  <script src="scripts/captions.js"></script>
+  <script>
+    $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';
+    $(document).foundation();
+  </script>
+  </body>
+</html>

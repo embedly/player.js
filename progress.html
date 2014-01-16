@@ -1,0 +1,63 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player.js</title>
+    <meta name="description" content="A library for programically interfacing with Embeds.">
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <script src="scripts/libs/modernizr.js"></script>
+    <style>
+    .progress {
+      border: none;
+      padding: 0;
+      height: 5px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+    }
+    .meter {
+      width:0%;
+
+    }
+    .row {
+      margin-top:20px;
+    }
+    .actions{
+      position: fixed;
+      top: 5px;
+      right: 6px;
+      z-index: 100;
+    }
+    </style>
+  </head>
+
+  <div class="progress">
+    <span class="meter"></span>
+  </div>
+
+  <div class="actions">
+    <a id="prev"><i class="fa fa-step-backward"></i></a>
+    <a id="play"><i class="fa fa-play"></i></a>
+    <a id="next"><i class="fa fa-step-forward"></i></a>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns large-centered">
+      <div id="result"></div>
+  </div>
+
+  <script src="scripts/libs/jquery.js"></script>
+  <script src="scripts/libs/foundation.min.js"></script>
+  <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
+  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.5.min.js"></script>
+  <script src="scripts/progress.js"></script>
+  <script>
+    $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';
+    $(document).foundation();
+  </script>
+  </body>
+</html>
