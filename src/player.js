@@ -15,8 +15,8 @@ playerjs.EVENTS = {
   ENDED: 'ended',
   SEEKED: 'seeked',
   TIMEUPDATE: 'timeupdate',
-  PROGRESS: 'progress', // Not implemented yet.
-  ERROR: 'error' // Not implemented yet.
+  PROGRESS: 'progress',
+  ERROR: 'error'
 };
 
 playerjs.METHODS = [
@@ -128,7 +128,7 @@ playerjs.Player.prototype.receive = function(e){
   }
 
   if (this.keeper.has(data.event, data.listener)){
-    this.keeper.execute(data.event, data.listener, data.value);
+    this.keeper.execute(data.event, data.listener, data.value, this);
   }
 };
 
@@ -150,7 +150,7 @@ playerjs.Player.prototype.ready = function(){
     playerjs.log('Player.dequeue', data);
 
     if (data.event === 'ready'){
-      this.keeper.execute(data.event, data.listener, true);
+      this.keeper.execute(data.event, data.listener, true, this);
     }
     this.send(data);
   }
@@ -195,38 +195,43 @@ playerjs.Player.prototype.off = function(event, callback){
   return false;
 };
 
-for (var i = 0, l = playerjs.METHODS.length - 2; i < l; i++) {
-  var methodName = playerjs.METHODS[i];
-  playerjs.Player.prototype[methodName] = createPrototypeFunction(methodName)
-}
-
 //create function to add to the Player prototype
 function createPrototypeFunction(name) {
+
   return function() {
+
     var data = {
       method: name
     };
-    var args = Array.prototype.slice.call(arguments);
-    var argsToCall;
 
-    //for setter add the first arg to the value field
-    if (/^set/.test(name)) {
-      data.value = args[0]
-    }
+    var args = Array.prototype.slice.call(arguments);
 
     //for getters add the passed parameters to the arguments for the send call
     if (/^get/.test(name)) {
+      playerjs.assert(args.length > 0, 'Get methods require a callback.');
       args.unshift(data);
-      argsToCall = args;
-    //otherwise only use the data object
     } else {
-      argsToCall = [data];
+      //for setter add the first arg to the value field
+      if (/^set/.test(name)) {
+        playerjs.assert(args.length !== 0, 'Set methods require a value.');
+        data.value = args[0];
+      }
+      args = [data];
     }
 
-    this.send.apply(this, argsToCall)
-  }
+    this.send.apply(this, args);
+  };
 }
 
+// Loop through the methods to add them to the prototype.
+for (var i = 0, l = playerjs.METHODS.length; i < l; i++) {
+  var methodName = playerjs.METHODS[i];
+
+  // We don't want to overwrite existing methods.
+  if (!playerjs.Player.prototype.hasOwnProperty(methodName)){
+    playerjs.Player.prototype[methodName] = createPrototypeFunction(methodName);
+  }
+}
 
 window.playerjs = playerjs;
 

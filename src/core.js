@@ -49,3 +49,10 @@ playerjs.isObject = function(obj){
 playerjs.isNone = function(obj){
   return (obj === null || obj === undefined);
 };
+
+// Assert
+playerjs.assert = function(test, msg) {
+  if (!test) {
+    throw msg || "Player.js Assert Failed";
+  }
+};

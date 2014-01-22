@@ -56,7 +56,7 @@ playerjs.Keeper.prototype.add = function(id, event, cb, ctx, one){
   }
 };
 
-playerjs.Keeper.prototype.execute = function(event, id, data){
+playerjs.Keeper.prototype.execute = function(event, id, data, ctx){
   if (!this.has(event, id)){
     return false;
   }
@@ -73,7 +73,7 @@ playerjs.Keeper.prototype.execute = function(event, id, data){
 
     execute.push({
       cb: d.cb,
-      ctx: d.ctx? d.ctx: window,
+      ctx: d.ctx? d.ctx: ctx,
       data: data
     });
 

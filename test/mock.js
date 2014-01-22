@@ -12,6 +12,7 @@ var video = {
   volume: 100,
   mute: false,
   playing: false,
+  loop : false,
   play: function(){
     video.interval = setInterval(function(){
       video.currentTime += 0.25;
@@ -76,4 +77,12 @@ receiver.on('unmute', function(){
 
 receiver.on('getMuted', function(callback){
   callback(video.mute);
+});
+
+receiver.on('getLoop', function(callback){
+  callback(video.loop);
+});
+
+receiver.on('setLoop', function(value){
+  video.loop = value;
 });
