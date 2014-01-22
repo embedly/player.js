@@ -195,86 +195,38 @@ playerjs.Player.prototype.off = function(event, callback){
   return false;
 };
 
-playerjs.Player.prototype.play = function(){
-  this.send({
-    method: 'play'
-  });
-};
+for (var i = 0, l = playerjs.METHODS.length - 2; i < l; i++) {
+  var methodName = playerjs.METHODS[i];
+  playerjs.Player.prototype[methodName] = createPrototypeFunction(methodName)
+}
 
-playerjs.Player.prototype.pause = function(){
-  this.send({
-    method: 'pause'
-  });
-};
+//create function to add to the Player prototype
+function createPrototypeFunction(name) {
+  return function() {
+    var data = {
+      method: name
+    };
+    var args = Array.prototype.slice.call(arguments);
+    var argsToCall;
 
-playerjs.Player.prototype.getPaused = function(callback, ctx){
-  this.send({
-    method: 'getPaused'
-  }, callback, ctx);
-};
+    //for setter add the first arg to the value field
+    if (/^set/.test(name)) {
+      data.value = args[0]
+    }
 
-playerjs.Player.prototype.mute = function(){
-  this.send({
-    method: 'mute'
-  });
-};
+    //for getters add the passed parameters to the arguments for the send call
+    if (/^get/.test(name)) {
+      args.unshift(data);
+      argsToCall = args;
+    //otherwise only use the data object
+    } else {
+      argsToCall = [data];
+    }
 
-playerjs.Player.prototype.unmute = function(){
-  this.send({
-    method: 'unmute'
-  });
-};
+    this.send.apply(this, argsToCall)
+  }
+}
 
-playerjs.Player.prototype.getMuted = function(callback, ctx){
-  this.send({
-    method: 'getMuted'
-  }, callback, ctx);
-};
-
-playerjs.Player.prototype.getVolume = function(callback, ctx){
-  this.send({
-    method: 'getVolume'
-  }, callback, ctx);
-};
-
-playerjs.Player.prototype.setVolume = function(value){
-  this.send({
-    method: 'setVolume',
-    value: value
-  });
-};
-
-playerjs.Player.prototype.getDuration = function(callback, ctx){
-  this.send({
-    method: 'getDuration'
-  }, callback, ctx);
-};
-
-playerjs.Player.prototype.setCurrentTime = function(value){
-  this.send({
-    method: 'setCurrentTime',
-    value: value
-  });
-};
-
-playerjs.Player.prototype.getCurrentTime = function(callback, ctx){
-  this.send({
-    method: 'getCurrentTime'
-  }, callback, ctx);
-};
-
-playerjs.Player.prototype.setLoop = function(value){
-  this.send({
-    method: 'getLoop',
-    value: value
-  });
-};
-
-playerjs.Player.prototype.getLoop = function(callback, ctx){
-  this.send({
-    method: 'getLoop'
-  }, callback, ctx);
-};
 
 window.playerjs = playerjs;
 
