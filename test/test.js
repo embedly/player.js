@@ -1,9 +1,9 @@
 /*globals asyncTest:true, ok:true, start:true, playerjs:true*/
 var FRAMES = [
-  'http://localhost.com:8003/test/iframe.html'
+  'http://localhost.com:8003/test/mock.html',
+  'http://localhost.com:8003/test/html.html',
+  'http://localhost.com:8003/test/video.html'
 ];
-
-//playerjs.DEBUG = true;
 
 var isNumber= function(obj){
   return Object.prototype.toString.call(obj) === "[object Number]";
