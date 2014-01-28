@@ -35,7 +35,13 @@ module.exports = function(grunt) {
       }
      },
     qunit: {
-      all: ['test/**/*_test.html']
+      all: {
+        options: {
+          urls: [
+            'http://localhost.com:8004/test/player_test.html'
+          ]
+        }
+      }
     },
     compass: {
       all: {
@@ -111,8 +117,10 @@ module.exports = function(grunt) {
     }
   });
 
-  // Default task.
+  // Tasks
+  grunt.registerTask("test", ["connect", "qunit"]);
   grunt.registerTask("default", ["concat:local", "connect:parent", "connect:child", "watch"]);
-  grunt.registerTask("release", ["concat:release", "uglify:release", "s3:release"]);
+  grunt.registerTask("release", ["jshint", "test", "concat:release", "uglify:release", "s3:release"]);
+
 
 };
