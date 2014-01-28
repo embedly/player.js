@@ -6,6 +6,9 @@
 */
 
 playerjs.Player = function(elem, options){
+  if (!(this instanceof playerjs.Player)) {
+    return new playerjs.Player(elem, options);
+  }
   this.init(elem, options);
 };
 
