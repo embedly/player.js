@@ -1,0 +1,391 @@
+/*global jQuery:true, playerjs:true, console:true */
+
+(function($, document, window){
+
+// Allows use to wait a certain ammount of time before we fail.
+var Waiter = function(testCase, time, t, names, msg, next){
+  this.init(testCase, time, t, names, msg, next);
+};
+
+Waiter.prototype.init = function(testCase, time, t, names, msg, next){
+  this.testCase = testCase;
+  this.names = names;
+  this.msg = msg;
+  this.t = t;
+  this.next = next;
+
+  var self = this;
+  setTimeout(function(){
+    self.done();
+  }, time);
+};
+
+Waiter.prototype.kill = function(){
+  this.killed = true;
+};
+
+Waiter.prototype.done = function(){
+  if (!this.killed){
+    for (var i=0; i<this.names.length; i++){
+
+      if (this.t instanceof Array) {
+        for (var n=0; n< this.t.length; n++){
+          this.testCase.fail(this.t[n], this.names[i], this.msg);
+        }
+      } else {
+        this.testCase.fail(this.t, this.names[i], this.msg);
+      }
+    }
+
+    if (this.next){
+      this.testCase.next();
+    } else {
+      this.testCase.failure();
+    }
+  }
+};
+
+
+// Test Case.
+var TestCase = function(player){
+  this.init(player);
+};
+
+TestCase.prototype.init = function(player){
+  this.player = player;
+  this.tests = ['ready', 'listeners', 'play', 'timeupdate', 'paused', 'ended', 'volume', 'mute', 'duration', 'currentTime', 'loop'];
+  this.index = 0;
+  this.waiters = [];
+  this.stopped = false;
+};
+
+TestCase.prototype.stop = function(){
+  // Just clear tests;
+  this.tests = [];
+  this.waiters = [];
+  this.stopped = true;
+};
+
+TestCase.prototype.test = function(){
+  var test = this.tests[this.index];
+
+  try {
+    this[test].call(this);
+  } catch (err){
+    console.error(err);
+  }
+};
+
+TestCase.prototype.next = function(){
+  this.index++;
+
+  if (this.stopped){
+    return false;
+  }
+
+  for (var i = 0; i < this.waiters.length; i++){
+    this.waiters[i].kill();
+  }
+  this.waiters = [];
+
+  if (this.index === this.tests.length){
+    $('#success').foundation('reveal', 'open');
+    return false;
+  }
+
+  this.test();
+};
+
+TestCase.prototype.delay = function(func, time){
+  var self = this;
+  setTimeout(function(){
+    func.call(self);
+  }, time? time:50);
+};
+
+TestCase.prototype.wait = function(time, t, names, msg, next){
+  var wait = new Waiter(this, time, t, names, msg, next);
+  this.waiters.push(wait);
+  return wait;
+};
+
+TestCase.prototype.selector = function(t, name){
+  return '#' + t + name.substr(0,1).toUpperCase() + name.substr(1);
+};
+
+TestCase.prototype.success = function(t, name){
+  $(this.selector(t, name)).addClass('success');
+};
+
+TestCase.prototype.fail = function(t, name, msg){
+  var selector = this.selector(t, name);
+  $(selector).addClass('error');
+  $(selector+' .test-result').text(msg);
+};
+
+TestCase.prototype.failure = function(t, name, msg){
+  this.stop();
+  $('#failure').foundation('reveal', 'open');
+};
+
+/* TESTS */
+TestCase.prototype.ready = function(){
+  this.wait(1000, 'event', ['ready'], 'Failed to get ready');
+  this.player.on('ready', function(){
+    this.success('event', 'ready');
+    this.next();
+  }, this);
+};
+
+TestCase.prototype.listeners = function(){
+  this.wait(3000, 'method', ['addEventListener', 'removeEventListener'], 'Failed to get ready');
+
+  var count = 0;
+  this.player.on('timeupdate', function(){
+
+    if (count === 0){
+      this.player.off('timeupdate');
+
+      this.delay(function(){
+        // we might get a timeout before everything is registered.
+        if (count < 2){
+          this.success('method', 'addEventListener');
+          this.success('method', 'removeEventListener');
+          this.player.pause();
+          this.next();
+        }
+      }, 750);
+    }
+    count++;
+  }, this);
+  this.player.play();
+};
+
+TestCase.prototype.play = function(){
+  console.log('Testing play');
+
+  this.wait(2000, ['method', 'event'], ['play', 'pause'], 'Failed play');
+
+  this.player.on('play', function(){
+    this.success('method', 'play');
+    this.success('event', 'play');
+
+    this.player.off('play');
+
+    console.log('Testing Pause');
+    this.player.on('pause', function(){
+      this.success('method', 'pause');
+      this.success('event', 'pause');
+      this.player.off('pause');
+
+      this.next();
+    }, this);
+
+    this.player.pause();
+  }, this);
+
+  this.player.play();
+};
+
+TestCase.prototype.timeupdate = function(){
+  console.log('Testing Timeupdate');
+  this.wait(2000, 'event', ['timeupdate'], 'Failed timeupdate');
+
+  var done = false, updates = [];
+  this.player.on('timeupdate', function(data){
+    updates.push(data);
+
+    if (!done && updates.length === 3){
+      done = true;
+      this.success('event', 'timeupdate');
+      this.player.off('timeupdate');
+      this.player.pause();
+      this.next();
+    }
+  }, this);
+
+  this.player.play();
+};
+
+TestCase.prototype.paused = function(){
+  console.log('Testing getPaused');
+
+  this.wait(2000, 'method', ['getPaused'], 'Failed getPaused');
+
+  this.player.on('play', function(){
+    this.player.off('play');
+
+    // make sure that we set the getPaused
+    this.player.getPaused(function(paused){
+
+      if (paused === false){
+        this.player.on('pause', function(){
+          this.player.off('pause');
+          this.player.getPaused(function(paused){
+            if (paused === true){
+              this.success('method', 'getPaused');
+              this.next();
+            } else {
+              this.fail('method', 'getPaused', 'When the video was paused after play getPaused did not return true');
+            }
+          }, this);
+
+        }, this);
+      } else {
+        this.fail('method', 'getPaused', 'When the video was played getPaused did not return false');
+      }
+      this.player.pause();
+    }, this);
+  }, this);
+  this.player.play();
+};
+
+TestCase.prototype.ended = function(){
+  console.log('Testing ended');
+
+  // If nothing works, fail them.
+  this.wait(3000, 'event', ['ended'], 'Failed to fire ended event');
+
+  this.player.getDuration(function(duration){
+
+    this.player.setCurrentTime(duration-1);
+    this.player.on('ended', function(){
+      this.player.setCurrentTime(0);
+      this.player.pause();
+      this.success('event', 'ended');
+      this.next();
+    }, this);
+
+    this.player.play();
+
+  }, this);
+};
+
+TestCase.prototype.duration = function(){
+  console.log('Testing getDuration');
+  // If nothing works, fail them.
+  this.wait(1000, 'method', ['getDuration'], 'Failed to getDuration', true);
+
+  this.player.getDuration(function(duration){
+    if (duration){
+      this.success('method', 'getDuration');
+      this.next();
+    }
+  }, this);
+};
+
+TestCase.prototype.currentTime = function(){
+  console.log('Testing setCurrentTime/getCurrentTime');
+  // If nothing works, fail them.
+  this.wait(1000, 'method', ['setCurrentTime', 'getCurrentTime'], 'Failed to get / set currentTime', true);
+
+  this.player.setCurrentTime(10);
+
+  this.delay(function(){
+    this.player.getCurrentTime(function(time){
+      if (time > 9 && time < 11){
+        this.success('method', 'setCurrentTime');
+        this.success('method', 'getCurrentTime');
+        this.player.pause();
+        this.next();
+      }
+    }, this);
+  }, 200);
+};
+
+TestCase.prototype.loop = function(){
+  console.log('Testing getLoop/setLoop');
+
+  // If nothing works, fail them.
+  this.wait(1000, 'method', ['getLoop', 'setLoop'], 'Failed to get/set loop', true);
+
+  this.player.setLoop(1);
+
+  this.delay(function(){
+    this.player.getLoop(function(loop){
+      if (loop === 1){
+        this.success('method', 'getLoop');
+        this.success('method', 'setLoop');
+        this.next();
+      } else {
+        this.fail('method', 'getLoop', 'Failed to get loop');
+        this.fail('method', 'setLoop', 'Failed to set loop');
+      }
+    });
+  }, 200);
+};
+
+TestCase.prototype.volume = function(){
+  console.log('Testing getVolume/setVolume');
+
+  // If nothing works, fail them.
+  this.wait(1000, 'method', ['getVolume', 'setVolume'], 'Failed to get/set volume', true);
+
+  this.player.setVolume(20);
+
+  this.delay(function(){
+    this.player.getVolume(function(volume){
+      if (volume === 20){
+        this.success('method', 'getVolume');
+        this.success('method', 'setVolume');
+        this.next();
+      } else {
+        this.fail('method', 'getVolume', 'Failed to get loop');
+        this.fail('method', 'setVolume', 'Failed to set loop');
+      }
+    }, this);
+  }, 200);
+};
+
+TestCase.prototype.mute = function(){
+  console.log('Testing mute/unmute/getMuted');
+
+  // If nothing works, fail them.
+  this.wait(1000, 'method', ['mute', 'unmute', 'getMuted'], 'Failed to mute/unmute/getMuted', true);
+
+  this.player.mute();
+
+  this.delay(function(){
+    this.player.getMuted(function(muted){
+      if (muted){
+        this.player.unmute();
+        this.delay(function(){
+          this.player.getMuted(function(muted){
+            this.success('method', 'mute');
+            this.success('method', 'unmute');
+            this.success('method', 'getMuted');
+            this.next();
+          }, this);
+        });
+
+      } else {
+        this.fail('method', 'mute', 'Failed to get loop');
+      }
+    }, this);
+  }, 200);
+};
+
+$('#url a').on('click', function(){
+  $('#url').submit();
+  return false;
+});
+
+if (window.location.search) {
+  var url = window.location.search.substr(1).split('&').reduce(function(i, v){
+    var p=v.split('=');
+    return p[0] === 'url' ? decodeURIComponent(p[1]) : null; }, null);
+
+  if (url) {
+    $('input').val(url);
+
+    // add the iframe.
+    $('#iframe').html('<iframe width="600" height="400" src="'+url+'"></iframe>');
+
+    var player = new playerjs.Player($('iframe')[0]);
+    var testCase = new TestCase(player);
+
+    testCase.test();
+  }
+}
+
+})(jQuery, document, window);

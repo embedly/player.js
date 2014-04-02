@@ -1,0 +1,340 @@
+
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Player.js IFrame Compatibility Tester</title>
+    <meta name="description" content="A library for programically interfacing with Embeds.">
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <script src="scripts/libs/modernizr.js"></script>
+    <style>
+
+    .success {
+      background: #43AC6A;
+    }
+    .error {
+      background: #de2b0f;
+    }
+
+    .row .test-case {
+      border: 1px solid #aaa;
+      margin: 15px auto;
+      padding: 10px;
+    }
+
+    .video {
+      margin-top: 1rem;
+      position: relative;
+      padding-top: 1.5625rem;
+      padding-bottom: 67.5%;
+      height: 0;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .video iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    </style>
+  </head>
+
+  <body>
+
+    <div class="row">
+      <div class="large-12 columns">
+
+        <div class="row">
+          <div class="large-6 columns">
+            <h1>Player.js IFrame Compatibility Tester</h1>
+            <p>
+              Enter the URL of the IFrame SRC URL you wish to test. We will highlight errors.
+            </p>
+              <form id="url" method="GET" action="/test.html">
+                <div class="row collapse">
+                  <div class="small-10 columns">
+                    <input type="text" name="url" placeholder="IFrame SRC URL"    value="http://cdn.embedly.com/widgets/media.html?src=http%3A%2F%2Fplayer.vimeo.com%2Fvideo%2F18150336&src_secure=1&url=http%3A%2F%2Fvimeo.com%2F18150336&image=http%3A%2F%2Fb.vimeocdn.com%2Fts%2F117%2F311%2F117311910_1280.jpg&key=internal&type=text%2Fhtml&schema=vimeo"
+                    >
+                  </div>
+                  <div class="small-2 columns">
+                    <a href="#" class="button postfix">Go</a>
+                  </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="large-6 columns">
+            <div id="iframe" class="video"></div>
+          </div>
+        </div>
+
+
+        <h2>Events</h2>
+
+        <div id="eventReady" class="row test-case">
+          <div class="large-3 columns">
+            <h4>ready</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Fired when the media is ready to receive commands. This is fired regardless of listening to the event.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="eventPlay" class="row test-case">
+          <div class="large-3 columns">
+            <h4>play</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Fires when the video starts to play.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="eventPause" class="row test-case">
+          <div class="large-3 columns">
+            <h4>pause</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Fires when the video is paused.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="eventTimeupdate" class="row test-case">
+          <div class="large-3 columns">
+            <h4>timeupdate</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Fires during playback, includes the currentTime and the duration.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="eventEnded" class="row test-case">
+          <div class="large-3 columns">
+            <h4>ended</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Fires when the video has ended.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+
+        <h2>Methods</h2>
+        <div id="methodPlay" class="row test-case">
+          <div class="large-3 columns">
+            <h4>play</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Play the media</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodPause" class="row test-case">
+          <div class="large-3 columns">
+            <h4>pause</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Pause the media</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodGetPaused" class="row test-case">
+          <div class="large-3 columns">
+            <h4>getPaused</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Determine if the media is paused</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodMute" class="row test-case">
+          <div class="large-3 columns">
+            <h4>mute</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Mute the media</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+
+        <div id="methodUnmute" class="row test-case">
+          <div class="large-3 columns">
+            <h4>unmute</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Unmute the media</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodGetMuted" class="row test-case">
+          <div class="large-3 columns">
+            <h4>getMuted</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Determine if the media is muted.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodSetVolume" class="row test-case">
+          <div class="large-3 columns">
+            <h4>setVolume</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Set the volume. Value needs to be between 0-100.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodGetVolume" class="row test-case">
+          <div class="large-3 columns">
+            <h4>getVolume</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Get the volume. Value will be between 0-100.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodGetDuration" class="row test-case">
+          <div class="large-3 columns">
+            <h4>getDuration</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Get the duration of the media is seconds.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodSetCurrentTime" class="row test-case">
+          <div class="large-3 columns">
+            <h4>setCurrentTime</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Perform a seek to a particular time in seconds.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodGetCurrentTime" class="row test-case">
+          <div class="large-3 columns">
+            <h4>getCurrentTime</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Get the current time in seconds of the video.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodSetLoop" class="row test-case">
+          <div class="large-3 columns">
+            <h4>setLoop</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Tell the media to loop continuously.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodGetLoop" class="row test-case">
+          <div class="large-3 columns">
+            <h4>getLoop</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Return the loop attribute of the video.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+
+        <div id="methodAddEventListener" class="row test-case">
+          <div class="large-3 columns">
+            <h4>addEventListener</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Add an event listener.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+        <div id="methodRemoveEventListener" class="row test-case">
+          <div class="large-3 columns">
+            <h4>removeEventListener</h4>
+          </div>
+          <div class="large-6 columns">
+            <p>Remove an event listener. If the listener is specified it should remove only that listener, otherwise remove all listeners.</p>
+          </div>
+          <div class="large-3 test-result columns">
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div id="failure" class="reveal-modal" data-reveal>
+      <h2>We stopped the tests because of failures.</h2>
+      <p class="lead">Please fix the errors below. Here are some links that might help:</p>
+      <ul>
+        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/README.rst">Player.js Readme</a></li>
+        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/SPEC.rst">Player.js Spec</a></li>
+        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/test/mock.js">Mock Receiver</a></li>
+        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/test/html.js">HTML5 Video Receiver</a></li>
+        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/test/video.js">Video.js Video Receiver</a></li>
+      </ul>
+
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+    <div id="success" class="reveal-modal" data-reveal>
+      <h2>Success</h2>
+      <p class="lead">We finished testing your implementation.</p>
+      <p>There may be a few errors, but the basic works.</p>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+
+    <script src="scripts/libs/jquery.js"></script>
+    <script src="scripts/libs/foundation.min.js"></script>
+    <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
+    <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.6.min.js"></script>
+    <script src="scripts/test.js"></script>
+    <script>
+      $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';
+      $(document).foundation();
+    </script>
+  </body>
+</html>
+
