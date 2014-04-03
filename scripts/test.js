@@ -57,6 +57,12 @@ TestCase.prototype.init = function(player){
   this.index = 0;
   this.waiters = [];
   this.stopped = false;
+
+
+  this.successes = 0;
+  this.failures = 0;
+  this.cautions = 0;
+
 };
 
 TestCase.prototype.stop = function(){
@@ -90,6 +96,15 @@ TestCase.prototype.next = function(){
 
   if (this.index === this.tests.length){
     $('#success').foundation('reveal', 'open');
+
+    $('.modal-results').html([
+      '<ul>',
+        '<li><b>Successful Tests:</b> <span>'+this.successes+'</span></li>',
+        '<li><b>Not Implemented:</b> <span>'+this.cautions+'</span></li>',
+        '<li><b>Failed Tests:</b> <span>'+this.failures+'</span></li>',
+      '</ul>'
+    ].join(''));
+
     return false;
   }
 
@@ -114,13 +129,26 @@ TestCase.prototype.selector = function(t, name){
 };
 
 TestCase.prototype.success = function(t, name){
-  $(this.selector(t, name)).addClass('success');
+  this.successes += 1;
+  var selector = this.selector(t, name);
+  $(selector).addClass('success');
+  $(selector+' .test-mark').html('<i class="fa fa-check"></i>');
+};
+
+TestCase.prototype.caution = function(t, name){
+  this.cautions += 1;
+  var selector = this.selector(t, name);
+  $(selector).addClass('caution');
+  $(selector+' .test-result').text('This implementation does not support "'+name+'"');
+  $(selector+' .test-mark').html('<i class="fa fa-minus"></i>');
 };
 
 TestCase.prototype.fail = function(t, name, msg){
+  this.failures += 1;
   var selector = this.selector(t, name);
   $(selector).addClass('error');
   $(selector+' .test-result').text(msg);
+  $(selector+' .test-mark').html('<i class="fa fa-times"></i>');
 };
 
 TestCase.prototype.failure = function(t, name, msg){
@@ -189,6 +217,13 @@ TestCase.prototype.play = function(){
 
 TestCase.prototype.timeupdate = function(){
   console.log('Testing Timeupdate');
+
+  if (!this.player.supports('event', 'timeupdate')){
+    this.caution('event', 'timeupdate');
+    this.next();
+    return false;
+  }
+
   this.wait(2000, 'event', ['timeupdate'], 'Failed timeupdate');
 
   var done = false, updates = [];
@@ -209,6 +244,12 @@ TestCase.prototype.timeupdate = function(){
 
 TestCase.prototype.paused = function(){
   console.log('Testing getPaused');
+
+  if (!this.player.supports('method', 'getPaused')){
+    this.caution('method', 'getPaused');
+    this.next();
+    return false;
+  }
 
   this.wait(2000, 'method', ['getPaused'], 'Failed getPaused');
 
@@ -243,6 +284,12 @@ TestCase.prototype.paused = function(){
 TestCase.prototype.ended = function(){
   console.log('Testing ended');
 
+  if (!this.player.supports('event', 'ended')){
+    this.caution('event', 'ended');
+    this.next();
+    return false;
+  }
+
   // If nothing works, fail them.
   this.wait(3000, 'event', ['ended'], 'Failed to fire ended event');
 
@@ -263,6 +310,13 @@ TestCase.prototype.ended = function(){
 
 TestCase.prototype.duration = function(){
   console.log('Testing getDuration');
+
+  if (!this.player.supports('method', 'getDuration')){
+    this.caution('method', 'getDuration');
+    this.next();
+    return false;
+  }
+
   // If nothing works, fail them.
   this.wait(1000, 'method', ['getDuration'], 'Failed to getDuration', true);
 
@@ -276,14 +330,22 @@ TestCase.prototype.duration = function(){
 
 TestCase.prototype.currentTime = function(){
   console.log('Testing setCurrentTime/getCurrentTime');
+
+  if (!this.player.supports('method', ['setCurrentTime', 'getCurrentTime'])){
+    this.caution('method', 'setCurrentTime');
+    this.caution('method', 'getCurrentTime');
+    this.next();
+    return false;
+  }
+
   // If nothing works, fail them.
   this.wait(1000, 'method', ['setCurrentTime', 'getCurrentTime'], 'Failed to get / set currentTime', true);
 
-  this.player.setCurrentTime(10);
+  this.player.setCurrentTime(3);
 
   this.delay(function(){
     this.player.getCurrentTime(function(time){
-      if (time > 9 && time < 11){
+      if (time > 2 && time < 4){
         this.success('method', 'setCurrentTime');
         this.success('method', 'getCurrentTime');
         this.player.pause();
@@ -295,6 +357,13 @@ TestCase.prototype.currentTime = function(){
 
 TestCase.prototype.loop = function(){
   console.log('Testing getLoop/setLoop');
+
+  if (!this.player.supports('method', ['getLoop', 'setLoop'])){
+    this.caution('method', 'getLoop');
+    this.caution('method', 'setLoop');
+    this.next();
+    return false;
+  }
 
   // If nothing works, fail them.
   this.wait(1000, 'method', ['getLoop', 'setLoop'], 'Failed to get/set loop', true);
@@ -318,6 +387,13 @@ TestCase.prototype.loop = function(){
 TestCase.prototype.volume = function(){
   console.log('Testing getVolume/setVolume');
 
+  if (!this.player.supports('method', ['getVolume', 'setVolume'])){
+    this.caution('method', 'getVolume');
+    this.caution('method', 'setVolume');
+    this.next();
+    return false;
+  }
+
   // If nothing works, fail them.
   this.wait(1000, 'method', ['getVolume', 'setVolume'], 'Failed to get/set volume', true);
 
@@ -339,6 +415,14 @@ TestCase.prototype.volume = function(){
 
 TestCase.prototype.mute = function(){
   console.log('Testing mute/unmute/getMuted');
+
+  if (!this.player.supports('method', ['mute', 'unmute', 'getMuted'])){
+    this.caution('method', 'mute');
+    this.caution('method', 'unmute');
+    this.caution('method', 'getMuted');
+    this.next();
+    return false;
+  }
 
   // If nothing works, fail them.
   this.wait(1000, 'method', ['mute', 'unmute', 'getMuted'], 'Failed to mute/unmute/getMuted', true);
@@ -383,6 +467,9 @@ if (window.location.search) {
 
     var player = new playerjs.Player($('iframe')[0]);
     var testCase = new TestCase(player);
+
+    // for testing purposes.
+    window.player = player;
 
     testCase.test();
   }

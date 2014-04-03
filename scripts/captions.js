@@ -17,6 +17,12 @@
   var start = function(url){
     $.embedly.oembed(url, {query: {scheme: 'http'}})
       .progress(function(obj){
+
+        if (!obj.html){
+          window.alert('This video could not be embedded');
+          return false;
+        }
+
         var ratio = ((obj.height/obj.width)*100).toPrecision(4) + '%';
         var $div = $('<div class="flex-video"><span id="caption"></span></div>');
         $div.append(obj.html);
