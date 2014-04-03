@@ -8,11 +8,11 @@
 * receiver.emit('timeupdate', {});
 */
 
-playerjs.Receiver = function(){
-  this.init();
+playerjs.Receiver = function(events, methods){
+  this.init(events, methods);
 };
 
-playerjs.Receiver.prototype.init = function(){
+playerjs.Receiver.prototype.init = function(events, methods){
   var self = this;
 
   // Deal with the ready crap.
@@ -23,6 +23,12 @@ playerjs.Receiver.prototype.init = function(){
 
   //Create a holder for all the methods.
   this.methods = {};
+
+  // holds all the information about what's supported
+  this.supported = {
+    events: events ? events : playerjs.EVENTS.all(),
+    methods: methods ? methods : playerjs.METHODS.all()
+  };
 
   // Deals with the adding and removing of event listeners.
   this.eventListeners = {};
@@ -64,7 +70,7 @@ playerjs.Receiver.prototype.receive = function(e){
   }
 
   // Make sure we have a valid method.
-  if (playerjs.METHODS.indexOf(data.method) === -1){
+  if (playerjs.METHODS.all().indexOf(data.method) === -1){
     this.emit('error', {
       code: 2,
       msg: 'Invalid Method "'+data.method+'"'
@@ -176,19 +182,22 @@ playerjs.Receiver.prototype.emit = function(event, value){
     var listener = this.eventListeners[event][i];
     this.send(event, value, listener);
   }
-  
+
   return true;
 };
 
 playerjs.Receiver.prototype.ready = function(){
   playerjs.log('Receiver.ready');
   this.isReady = true;
-  
+
   var data = {
-    src: window.location.toString()
+    src: window.location.toString(),
+    events: this.supported.events,
+    methods: this.supported.methods
   };
-  
+
   if (!this.emit('ready', data)){
     this.send('ready', data);
   }
+
 };

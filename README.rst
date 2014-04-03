@@ -16,6 +16,10 @@ A JavaScript library for interacting with iframes that support Player.js spec.
       console.log(duration);
     });
 
+    if (player.supports('method', 'mute')){
+      player.mute();
+    }
+
     player.play();
   });
 
@@ -25,7 +29,7 @@ Install
 Player.js is hosted on Embedly's CDN.
 ::
 
-  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.6.min.js"></script>
+  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.7.min.js"></script>
 
 
 Ready
@@ -172,6 +176,12 @@ Methods
       console.log('play');
     }, this);
 
+``supports``: ['method', 'event'], methodOrEventName
+  Determines if the player supports a given event or method.
+
+    player.supports('method', 'getDuration');
+    player.supports('event', 'ended');
+
 
 Events
 ------
@@ -278,3 +288,60 @@ Methods
   ``ready``::
 
     receiver.ready();
+
+Adapters
+--------
+In order to make it super easy to add Player.js to any embed, we have written
+adapters for common video libraries. We currently have adapters for
+`Video.js <http://www.videojs.com/>`_,
+`SublimeVideo <http://sublimevideo.net/>`_ and
+`HTML5 Video <http://dev.w3.org/html5/spec-author-view/video.html>`_. An
+Adapter wraps the Receiver and wires up all the events so your iframe is
+Player.js compatible.
+
+
+VideoJSAdapter
+""""""""""""""
+An adapter for `Video.js <http://www.videojs.com/>`_.
+::
+
+  videojs("video", {}, function(){
+    var adapter = new playerjs.VideoJSAdapter(this);
+    // ... Do other things to initialize your video.
+
+    // Start accepting events
+    adapter.ready();
+  });
+
+
+HTML5Adapter
+""""""""""""
+An adapter for
+`HTML5 Video <http://dev.w3.org/html5/spec-author-view/video.html>`_.
+::
+
+    var video = document.getElementById('video');
+    video.load();
+
+    var adapter = playerjs.HTML5Adapter(video);
+
+    // Start accepting events
+    adapter.ready();
+
+
+SublimeAdapter
+""""""""""""""
+An adapter for `SublimeVideo <http://sublimevideo.net/>`_. Currently the
+SublimeVideo player api does not allow developers to change volume, mute or get
+paused information.
+::
+
+    sublime.ready(function(){
+      var player = sublime.player('video');
+
+      var adapter = playerjs.SublimeAdapter(player);
+
+      // Start accepting events
+      adapter.ready();
+    });
+

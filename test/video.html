@@ -11,6 +11,12 @@
   </video>
   <script src="//vjs.zencdn.net/4.2/video.js"></script>
   <script src="/dist/player.js"></script>
-  <script src="/test/video.js"></script>
+  <script>
+    videojs("video", {}, function(){
+      var adapter = playerjs.VideoJSAdapter(this);
+
+      adapter.ready();
+    });
+  </script>
 </body>
 </html>

@@ -61,13 +61,13 @@ module.exports = function(grunt) {
           ' Licensed <%= _.pluck(pkg.licenses, "type").join(", ") %> */\n'
       },
       local: {
-        src: ['src/core.js', 'src/keeper.js', 'src/player.js', 'src/receiver.js'],
+        src: ['src/core.js', 'src/keeper.js', 'src/player.js', 'src/receiver.js', 'src/adapters/*.js'],
         dest: 'dist/player.js'
       },
       release: {
         src: [
           'src/intro.js', 'src/core.js', 'src/keeper.js',
-          'src/player.js', 'src/receiver.js', 'src/outro.js'
+          'src/player.js', 'src/receiver.js', 'src/adapters/*.js', 'src/outro.js'
         ],
         dest: 'dist/player-<%= pkg.version %>.js'
       }
@@ -94,7 +94,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['src/*.js'],
+      files: ['src/**/*.js'],
       tasks: ['concat:local']
     },
     jshint: {

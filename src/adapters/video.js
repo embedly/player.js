@@ -1,11 +1,20 @@
-/*globals playerjs:true, videojs:true*/
-var receiver = new playerjs.Receiver();
+/*globals playerjs:true*/
 
-videojs("video", {}, function(){
-  var player = this;
+playerjs.VideoJSAdapter = function(player){
+  if (!(this instanceof playerjs.VideoJSAdapter)) {
+    return new playerjs.VideoJSAdapter(player);
+  }
+  this.init(player);
+};
 
-  receiver.ready();
+playerjs.VideoJSAdapter.prototype.init = function(player){
 
+  playerjs.assert(player, 'playerjs.VideoJSReceiver requires a player object');
+
+  // Set up the actual receiver
+  var receiver = this.receiver = new playerjs.Receiver();
+
+  /* EVENTS */
   player.on("pause", function(){
     receiver.emit('pause');
   });
@@ -38,6 +47,7 @@ videojs("video", {}, function(){
   });
 
 
+  /* METHODS */
   receiver.on('play', function(){
     player.play();
   });
@@ -89,6 +99,9 @@ videojs("video", {}, function(){
   receiver.on('setLoop', function(value){
     player.loop(value);
   });
+};
 
-  receiver.ready();
-});
+/* Call when the video.js is ready */
+playerjs.VideoJSAdapter.prototype.ready = function(){
+  this.receiver.ready();
+};

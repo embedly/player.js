@@ -45,9 +45,16 @@ playerjs.isObject = function(obj){
   return Object.prototype.toString.call(obj) === "[object Object]";
 };
 
+playerjs.isArray = function(obj){
+  return Object.prototype.toString.call(obj) === "[object Array]";
+};
 
 playerjs.isNone = function(obj){
   return (obj === null || obj === undefined);
+};
+
+playerjs.has = function(obj, key){
+  return Object.prototype.hasOwnProperty.call(obj, key);
 };
 
 // Assert

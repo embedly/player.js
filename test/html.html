@@ -9,6 +9,13 @@
     <source src="/lib/videos/demo.mp4" type="video/mp4">
   </video>
   <script src="/dist/player.js"></script>
-  <script src="/test/html.js"></script>
+  <script>
+    var video = document.getElementById('video');
+    video.load();
+
+    var adapter = playerjs.HTML5Adapter(video);
+
+    adapter.ready();
+  </script>
 </body>
 </html>

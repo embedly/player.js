@@ -6,6 +6,13 @@
 <body>
   <h1>Mock IFrame</h1>
   <script src="/dist/player.js"></script>
-  <script src="/test/mock.js"></script>
+  <script>
+  // Set up the adapter
+  var adapter = playerjs.MockAdapter();
+
+  // call ready.
+  adapter.ready();
+
+  </script>
 </body>
 </html>

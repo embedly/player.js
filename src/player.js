@@ -13,32 +13,52 @@ playerjs.Player = function(elem, options){
 };
 
 playerjs.EVENTS = {
+  READY: 'ready',
   PLAY: 'play',
   PAUSE: 'pause',
   ENDED: 'ended',
-  SEEKED: 'seeked',
   TIMEUPDATE: 'timeupdate',
   PROGRESS: 'progress',
   ERROR: 'error'
 };
 
-playerjs.METHODS = [
-  'play',
-  'pause',
-  'getPaused',
-  'mute',
-  'unmute',
-  'getMuted',
-  'setVolume',
-  'getVolume',
-  'getDuration',
-  'setCurrentTime',
-  'getCurrentTime',
-  'setLoop',
-  'getLoop',
-  'removeEventListener',
-  'addEventListener'
-];
+playerjs.EVENTS.all = function(){
+  var all = [];
+  for (var key in playerjs.EVENTS) {
+    if (playerjs.has(playerjs.EVENTS, key) && playerjs.isString(playerjs.EVENTS[key])) {
+      all.push(playerjs.EVENTS[key]);
+    }
+  }
+  return all;
+};
+
+playerjs.METHODS = {
+  PLAY: 'play',
+  PAUSE: 'pause',
+  GETPAUSED: 'getPaused',
+  MUTE: 'mute',
+  UNMUTE: 'unmute',
+  GETMUTED: 'getMuted',
+  SETVOLUME: 'setVolume',
+  GETVOLUME: 'getVolume',
+  GETDURATION: 'getDuration',
+  SETCURRENTTIME: 'setCurrentTime',
+  GETCURRENTTIME:'getCurrentTime',
+  SETLOOP: 'setLoop',
+  GETLOOP: 'getLoop',
+  REMOVEEVENTLISTENER: 'removeEventListener',
+  ADDEVENTLISTENER: 'addEventListener'
+};
+
+playerjs.METHODS.all = function(){
+  var all = [];
+  for (var key in playerjs.METHODS) {
+    if (playerjs.has(playerjs.METHODS, key) && playerjs.isString(playerjs.METHODS[key])) {
+      all.push(playerjs.METHODS[key]);
+    }
+  }
+  return all;
+};
 
 playerjs.READIED = [];
 
@@ -61,6 +81,10 @@ playerjs.Player.prototype.init = function(elem, options){
   // Queuing before ready.
   this.isReady = false;
   this.queue = [];
+
+  // Assume that everything is supported, unless we know otherwise.
+  this.events = playerjs.EVENTS.all();
+  this.methods = playerjs.METHODS.all();
 
   if (playerjs.POST_MESSAGE){
     // Set up the reciever.
@@ -126,8 +150,8 @@ playerjs.Player.prototype.receive = function(e){
   }
 
   // We need to determine if we are ready.
-  if (data.event === 'ready'){
-    this.ready();
+  if (data.event === 'ready' && data.value && data.value.src === this.elem.src){
+    this.ready(data);
   }
 
   if (this.keeper.has(data.event, data.listener)){
@@ -136,10 +160,18 @@ playerjs.Player.prototype.receive = function(e){
 };
 
 
-playerjs.Player.prototype.ready = function(){
+playerjs.Player.prototype.ready = function(data){
 
   if (this.isReady === true){
     return false;
+  }
+
+  // If we got a list of supported methods, we should set them.
+  if (data.value.events){
+    this.events = data.value.events;
+  }
+  if (data.value.methods){
+    this.methods = data.value.methods;
   }
 
   // set ready.
@@ -148,14 +180,14 @@ playerjs.Player.prototype.ready = function(){
 
   // Clear the queue
   for (var i=0; i<this.queue.length; i++){
-    var data = this.queue[i];
+    var obj = this.queue[i];
 
-    playerjs.log('Player.dequeue', data);
+    playerjs.log('Player.dequeue', obj);
 
     if (data.event === 'ready'){
-      this.keeper.execute(data.event, data.listener, true, this);
+      this.keeper.execute(obj.event, obj.listener, true, this);
     }
-    this.send(data);
+    this.send(obj);
   }
   this.queue = [];
 };
@@ -198,6 +230,27 @@ playerjs.Player.prototype.off = function(event, callback){
   return false;
 };
 
+// Based on what ready passed back, we can determine if the events/method are
+// supported by the player.
+playerjs.Player.prototype.supports = function(evtOrMethod, names){
+
+  playerjs.assert(['method', 'event'].indexOf(evtOrMethod) > -1,
+    'evtOrMethod needs to be either "event" or "method" got ' + evtOrMethod);
+
+  // Make everything an array.
+  names = playerjs.isArray(names) ? names : [names];
+
+  var all = evtOrMethod === 'event' ? this.events : this.methods;
+
+  for (var i=0; i < names.length; i++){
+    if (all.indexOf(names[i]) === -1){
+      return false;
+    }
+  }
+
+  return true;
+};
+
 //create function to add to the Player prototype
 function createPrototypeFunction(name) {
 
@@ -227,8 +280,8 @@ function createPrototypeFunction(name) {
 }
 
 // Loop through the methods to add them to the prototype.
-for (var i = 0, l = playerjs.METHODS.length; i < l; i++) {
-  var methodName = playerjs.METHODS[i];
+for (var i = 0, l = playerjs.METHODS.all().length; i < l; i++) {
+  var methodName = playerjs.METHODS.all()[i];
 
   // We don't want to overwrite existing methods.
   if (!playerjs.Player.prototype.hasOwnProperty(methodName)){

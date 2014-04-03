@@ -2,7 +2,8 @@
 var FRAMES = [
   'http://localhost.com:8003/test/mock.html',
   'http://localhost.com:8003/test/html.html',
-  'http://localhost.com:8003/test/video.html'
+  'http://localhost.com:8003/test/video.html',
+  'http://localhost.com:8003/test/sublime.html'
 ];
 
 var isNumber= function(obj){
@@ -11,6 +12,7 @@ var isNumber= function(obj){
 
 function testCases(){
   var player = this;
+
   asyncTest("Play", 3, function() {
     var count = 0;
     var done = function(){
@@ -40,15 +42,11 @@ function testCases(){
     player.play();
   });
 
-  asyncTest("Pause", 2, function() {
+  asyncTest("Pause", 1, function() {
     player.on('pause', function(){
       ok(true, "video has paused");
       this.off('pause');
-      // Test if paused works.
-      this.getPaused(function(value){
-        ok( true === value, "video is paused" );
-        start();
-      });
+      start();
     });
 
     // We won't fire pause unless we are actually playing first.
@@ -60,62 +58,99 @@ function testCases(){
     player.play();
   });
 
-  asyncTest("Duration", 1, function() {
-    player.getDuration(function(value){
-      ok(isNumber(value), "video has duration" );
-      start();
-    });
-  });
-
-  asyncTest("getVolume", 1, function() {
-    player.getVolume(function(value){
-      ok(isNumber(value), "video has Volume" );
-      start();
-    });
-  });
-
-  asyncTest("getCurrentTime", 1, function() {
-    player.getCurrentTime(function(value){
-      ok(isNumber(value), "video has time:" + value );
-      start();
-    });
-  });
-
-  //Test Seek.
-  asyncTest("setCurrentTime", 1, function() {
-    player.on('timeupdate', function(v){
-      if (v.seconds >= 5){
-        player.off('timeupdate');
-        player.getCurrentTime(function(value){
-          ok(Math.floor(value) === 5, "video has time:" + value );
-          player.pause();
+  if (player.supports('method', playerjs.METHODS.GETPAUSED)){
+    asyncTest("getPaused", 1, function() {
+      player.on('pause', function(){
+        this.off('pause');
+        // Test if paused works.
+        this.getPaused(function(value){
+          ok( true === value, "video is paused" );
           start();
         });
-      }
+      });
+
+      player.on('play', function(){
+        player.off('play');
+        player.pause();
+      });
+
+      player.play();
     });
+  }
 
-    player.play();
-    player.setCurrentTime(5);
-  });
-
-  //Test Loop
-  asyncTest("setLoop", 1, function() {
-    player.setLoop(true);
-    setTimeout(function(){
-      player.getLoop(function(v){
-        ok(v === true, 'Set Loop was not set');
+  if (player.supports('method', playerjs.METHODS.GETDURATION)){
+    asyncTest("Duration", 1, function() {
+      player.getDuration(function(value){
+        ok(isNumber(value), "video has duration" );
         start();
       });
-    }, 100);
-  });
+    });
+  }
 
-  // Volumne tests
-  asyncTest("volume", 3, function() {
+  if (player.supports('method', playerjs.METHODS.GETCURRENTTIME)){
+    asyncTest("getCurrentTime", 1, function() {
+      player.getCurrentTime(function(value){
+        ok(isNumber(value), "video has time:" + value );
+        start();
+      });
+    });
+  }
 
-    player.setVolume(87);
-    player.getVolume(function(value){
-      ok(value === 87, "video volume:" + value );
+  if (player.supports('method', [playerjs.METHODS.GETCURRENTTIME, playerjs.METHODS.SETCURRENTTIME])){
+    //Test Seek.
+    asyncTest("setCurrentTime", 1, function() {
+      player.on('timeupdate', function(v){
+        if (v.seconds >= 5){
+          player.off('timeupdate');
+          player.getCurrentTime(function(value){
+            ok(Math.floor(value) === 5, "video has time:" + value );
+            player.pause();
+            start();
+          });
+        }
+      });
 
+      player.play();
+      player.setCurrentTime(5);
+    });
+  }
+
+  if (player.supports('method', [playerjs.METHODS.SETLOOP, playerjs.METHODS.GETLOOP])){
+    //Test Loop
+    asyncTest("setLoop", 1, function() {
+      player.setLoop(true);
+      setTimeout(function(){
+        player.getLoop(function(v){
+          ok(v === true, 'Set Loop was not set');
+          start();
+        });
+      }, 100);
+    });
+  }
+
+  if (player.supports('method', playerjs.METHODS.GETVOLUME)){
+    asyncTest("getVolume", 1, function() {
+      player.getVolume(function(value){
+        ok(isNumber(value), "video has Volume" );
+        start();
+      });
+    });
+  }
+
+  if (player.supports('method', [playerjs.METHODS.SETVOLUME, playerjs.METHODS.GETVOLUME])){
+    // Volumne tests
+    asyncTest("volume", 1, function() {
+
+      player.setVolume(87);
+      player.getVolume(function(value){
+        ok(value === 87, "video volume:" + value );
+        start();
+      });
+    });
+  }
+
+  if (player.supports('method', [playerjs.METHODS.MUTE, playerjs.METHODS.UNMUTE, playerjs.METHODS.GETMUTED])){
+    asyncTest("volume", 2, function() {
       //Mute
       player.mute();
 
@@ -129,18 +164,12 @@ function testCases(){
             player.getMuted(function(value){
               ok(!value, "video unmuted:" + value );
               start();
-
-              // Not all providers have mute, so we are going to need to fix this.
-              //player.getVolume(function(value){
-              //  ok(value === 87, "video volume:" + value );
-              //  start();
-              //});
             });
           }, 500);
         });
       }, 500);
     });
-  });
+  }
 }
 
 var count = 0,
@@ -155,8 +184,6 @@ var loadPlayers = function() {
       var player = new playerjs.Player(iframes[d]);
 
       player.on('ready', testCases, player);
-
-      players.push(player);
     }
   }
 };
