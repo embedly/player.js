@@ -53,7 +53,7 @@ var TestCase = function(player){
 
 TestCase.prototype.init = function(player){
   this.player = player;
-  this.tests = ['ready', 'listeners', 'play', 'timeupdate', 'paused', 'ended', 'volume', 'mute', 'duration', 'currentTime', 'loop'];
+  this.tests = ['ready', 'listeners', 'play', 'timeupdate', 'paused', 'volume', 'mute', 'duration', 'currentTime', 'loop', 'ended'];
   this.index = 0;
   this.waiters = [];
   this.stopped = false;
@@ -158,7 +158,7 @@ TestCase.prototype.failure = function(t, name, msg){
 
 /* TESTS */
 TestCase.prototype.ready = function(){
-  this.wait(1000, 'event', ['ready'], 'Failed to get ready');
+  this.wait(2000, 'event', ['ready'], 'Failed to get ready');
   this.player.on('ready', function(){
     this.success('event', 'ready');
     this.next();
