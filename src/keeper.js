@@ -67,17 +67,21 @@ playerjs.Keeper.prototype.execute = function(event, id, data, ctx){
   for (var i=0; i< this.data[event].length; i++){
     var d = this.data[event][i];
 
-    if (!playerjs.isNone(id) && d.id !== id){
-      continue;
-    }
+    // There are omni events, in that they do not have an id. i.e "ready".
+    // Or there is an ID and we only want to execute the right id'd method.
+    if (playerjs.isNone(id) || (!playerjs.isNone(id) && d.id === id )){
 
-    execute.push({
-      cb: d.cb,
-      ctx: d.ctx? d.ctx: ctx,
-      data: data
-    });
+      execute.push({
+        cb: d.cb,
+        ctx: d.ctx? d.ctx: ctx,
+        data: data
+      });
 
-    if (d.one === false){
+      // If we only wanted to execute this once.
+      if (d.one === false){
+        keep.push(d);
+      }
+    } else {
       keep.push(d);
     }
   }

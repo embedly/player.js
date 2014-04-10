@@ -1,4 +1,4 @@
-/*globals asyncTest:true, ok:true, start:true, playerjs:true*/
+/*globals asyncTest:true, ok:true, fail:true, start:true, playerjs:true*/
 var FRAMES = [
   'http://localhost.com:8003/test/mock.html',
   'http://localhost.com:8003/test/html.html',
@@ -54,6 +54,71 @@ function testCases(){
       player.off('play');
       player.pause();
     });
+
+    player.play();
+  });
+
+  // Test to make sure we can attach multiple listeners to the same event.
+  asyncTest("multi-listeners", 4, function() {
+
+    var indexes = [];
+    var done = function(index){
+      indexes.push(index);
+      if (indexes.length === 3){
+        // Wait for pause.
+        player.on('pause', function(){
+          player.off('pause');
+          player.off('play', one);
+          player.play();
+        });
+        player.pause();
+      } else if (indexes.length === 5){
+        // Give it some time to call the 6th play event, otherwise
+        // suceed.
+        setTimeout(function(){
+          var occr = {}, n;
+          // count occurances in array;
+          for (var i = 0; i<indexes.length; i++){
+            n = indexes[i];
+            if (occr.hasOwnProperty(n)){
+              occr[n]++;
+            } else {
+              occr[n] = 1;
+            }
+          }
+          // Make sure the correct number of play events were done.
+          ok(occr[1] === 1, 'The proper number of events were registered');
+          ok(occr[0] === 2, 'The proper number of events were registered');
+          ok(occr[2] === 2, 'The proper number of events were registered');
+
+          ok(true, 'All play events were registered and executed');
+          player.off('play');
+          player.pause();
+          start();
+        }, 200);
+      } else if (indexes.length === 6){
+        // If we get too many events, we should fail.
+        fail('play event was not removed');
+      }
+    };
+
+    // Callbacks.
+    var zero = function(){
+      done(0);
+    };
+
+    var one = function(){
+      done(1);
+    };
+
+    var two = function(){
+      done(2);
+    };
+
+    player.on('play', zero);
+    player.on('play', one);
+    player.on('play', two);
+
 
     player.play();
   });

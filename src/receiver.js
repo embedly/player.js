@@ -85,7 +85,7 @@ playerjs.Receiver.prototype.receive = function(e){
   if (data.method === 'addEventListener') {
     if (this.eventListeners.hasOwnProperty(data.value)) {
       //If the listener is the same, i.e. null only add it once.
-      if (this.eventListeners[data.value].indexOf(listener) > -1){
+      if (this.eventListeners[data.value].indexOf(listener) === -1){
         this.eventListeners[data.value].push(listener);
       }
     } else {
