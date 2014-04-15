@@ -53,7 +53,11 @@
 
   TestCase.prototype.init = function(player){
     this.player = player;
-    this.tests = ['ready', 'listeners', 'play', 'timeupdate', 'paused', 'volume', 'mute', 'duration', 'currentTime', 'loop', 'ended'];
+    this.tests = [
+      'ready', 'listeners', 'play', 'timeupdate', 'paused',
+      'volume', 'mute', 'duration', 'currentTime', 'loop',
+      'ended'
+    ];
     this.index = 0;
     this.waiters = [];
     this.stopped = false;
@@ -293,19 +297,20 @@
     // If nothing works, fail them.
     this.wait(3000, 'event', ['ended'], 'Failed to fire ended event');
 
-    this.player.getDuration(function(duration){
-
-      this.player.setCurrentTime(duration-1);
-      this.player.on('ended', function(){
-        this.player.setCurrentTime(0);
-        this.player.pause();
-        this.success('event', 'ended');
-        this.next();
+    this.player.on('timeupdate', function(){
+      this.player.off('timeupdate');
+      this.player.getDuration(function(duration){
+        this.player.setCurrentTime(duration-1);
+        this.player.on('ended', function(){
+          //this.player.setCurrentTime(0);
+          this.player.pause();
+          this.success('event', 'ended');
+          this.next();
+        }, this);
       }, this);
-
-      this.player.play();
-
     }, this);
+
+    this.player.play();
   };
 
   TestCase.prototype.duration = function(){
@@ -339,20 +344,45 @@
     }
 
     // If nothing works, fail them.
-    this.wait(1000, 'method', ['setCurrentTime', 'getCurrentTime'], 'Failed to get / set currentTime', true);
+    this.wait(3000, 'method', ['setCurrentTime', 'getCurrentTime'], 'Failed to get / set currentTime', true);
 
-    this.player.setCurrentTime(3);
+    this.player.on('timeupdate', function(data){
+      // Seek back to 0
+      if (data.seconds < 0 || data.seconds > 1){
+        this.fail('method', 'setCurrentTime', 'Expected a time of .5. Got: "'+data.seconds+'"');
+        this.fail('method', 'getCurrentTime', 'Expected a time of .5. Got: "'+data.seconds+'"');
+      }
 
-    this.delay(function(){
-      this.player.getCurrentTime(function(time){
-        if (time > 2 && time < 4){
-          this.success('method', 'setCurrentTime');
-          this.success('method', 'getCurrentTime');
-          this.player.pause();
-          this.next();
-        }
+      this.player.off('timeupdate');
+
+      // Seek forward a bit.
+      this.player.setCurrentTime(3);
+
+      this.player.on('timeupdate', function(data){
+        this.player.off('timeupdate');
+
+        // It takes a bit to seek sometimes.
+        this.delay(function(){
+          this.player.getCurrentTime(function(time){
+            if (time > 2 && time < 4){
+              this.success('method', 'setCurrentTime');
+              this.success('method', 'getCurrentTime');
+            } else {
+              this.fail('method', 'setCurrentTime', 'Expected a time of 3. Got: "'+time+'"');
+              this.fail('method', 'getCurrentTime', 'Expected a time of 3. Got: "'+time+'"');
+            }
+
+            this.player.pause();
+            this.next();
+
+          }, this);
+        }, 200);
+
       }, this);
-    }, 200);
+    }, this);
+
+    this.player.setCurrentTime(0);
+    this.player.play();
   };
 
   TestCase.prototype.loop = function(){
@@ -456,21 +486,27 @@
   });
 
   if (window.location.search) {
-    var url = window.location.search.substr(1).split('&').reduce(function(i, v){
+    var params = window.location.search.substr(1).split('&').reduce(function(i, v){
       var p=v.split('=');
-      return p[0] === 'url' ? decodeURIComponent(p[1]) : null; }, null);
+      i[p[0]] = decodeURIComponent(p[1]);
+      return i;
+    }, {});
 
-    if (url) {
-      $('input').val(url);
+    if (params.url) {
+      $('input').val(params.url);
 
       // add the iframe.
-      $('#iframe').html('<iframe width="600" height="400" src="'+url+'"></iframe>');
+      $('#iframe').html('<iframe width="600" height="400" src="'+params.url+'"></iframe>');
 
       var player = new playerjs.Player($('iframe')[0]);
       var testCase = new TestCase(player);
 
       // for testing purposes.
       window.player = player;
+
+      if (params.test){
+        testCase.tests = [params.test];
+      }
 
       testCase.test();
     }
