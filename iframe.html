@@ -1,0 +1,23 @@
+<html>
+  <head>
+    <style>
+    * {
+      padding:0;
+      margin:0;
+      width:100%;
+      height:100%;
+      background:#000;
+    }
+    </style>
+  </head>
+
+  <body>
+    <video id="video" src="/assets/demo.mp4"></video>
+    <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.8.min.js"></script>
+    <script>
+      var video = document.getElementById('video');
+      var adapter = new playerjs.HTML5Adapter(video);
+      adapter.ready();
+    </script>
+  </body>
+</html>

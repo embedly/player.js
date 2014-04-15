@@ -1,0 +1,400 @@
+
+//http://www.colourlovers.com/palette/53698/Its_a_Virtue
+$milk: #E2DF9A;
+$golden: #EBE54D;
+$moss: #757449;
+$clover: #4B490B;
+$pink: #FF0051;
+$white: #fff;
+$grey: #333;
+
+body {
+  font-family: 'Cantarell', sans-serif;
+}
+
+h1,h2,h3,h4 {
+  font-family: 'Fjalla One', sans-serif;
+  color: $grey;
+}
+a {
+  color: $pink;
+  &:hover {
+    color:darken($pink, 5%);
+  }
+}
+
+.button {
+  background-color: $pink;
+  border-color:darken($pink, 5%);
+  &:focus, &:hover {
+    background-color:darken($pink, 20%);
+  }
+}
+
+.top-bar .name h1 {
+  color:$white;
+}
+
+.contain-to-grid {
+  border-bottom:2px solid $pink;
+}
+
+.contain-to-grid, .top-bar, .top-bar-section ul {
+  //background: $pink;
+  color:$white;
+}
+
+.top-bar-section li:not(.has-form) a:not(.button){
+  //background: $pink;
+  color:$white;
+}
+
+
+.header {
+  background: $grey;
+  min-height:400px;
+  padding:3em 0;
+  margin-bottom: 3em;
+  border-bottom:2px solid $pink;
+  p {
+    color:$white;
+  }
+  h1 {
+    color: #fff;
+    font-size:5em;
+  }
+}
+
+.footer {
+  background:$golden;
+  margin: 4em 0 0 0;
+  p {
+    font-size: 12px;
+    padding: 1em 0 0 0;
+  }
+}
+
+.breaker {
+  border-bottom: 2px solid $golden;
+  margin: 7em 0 2em;
+  h2 {
+    font-size: 4em;
+    line-height: 0.5em;
+  }
+}
+
+.resp {
+  margin-top: 1rem;
+  position: relative;
+  padding-top: 1.5625rem;
+  padding-bottom: 67.5%;
+  height: 0;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.resp iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.controls {
+  //background: $pink;
+  margin:10px 0;
+  padding: 10px 5px;
+  .columns {
+   padding:0;
+  }
+
+  .play {
+    display:block;
+    color: $golden;
+    text-align: center;
+    .fa-play {
+      display:none;
+    }
+    .fa-pause {
+      display:block;
+    }
+
+    &.paused {
+      .fa-play {
+        display:block;
+      }
+      .fa-pause {
+        display:none;
+      }
+    }
+  }
+  a {
+    color: $golden;
+  }
+
+  .progress {
+    border: none;
+    padding: 2px;
+    background: #fff;
+    height: 15px;
+    margin: 0;
+    .meter {
+      background:$golden;
+      width: 0%;
+    }
+  }
+
+  .mute {
+    color:$golden;
+    float:left;
+    margin-left: 5px;
+    width: 15px;
+    .fa-volume-off {
+      display: none;
+    }
+    .fa-volume-up {
+      display: block;
+    }
+
+    &.muted {
+      color: #fff;
+      .fa-volume-off {
+        display: block;
+      }
+      .fa-volume-up {
+        display: none;
+      }
+
+    }
+  }
+
+  .volume {
+    float:left;
+    height:15px;
+    margin-left: 5px;
+    span {
+      background: #fff;
+      height: 15px;
+      width: 3px;
+      margin-right: 2px;
+      display: block;
+      float: left;
+
+      &.active, &.set {
+        background: $golden;
+      }
+      &.inactive {
+        background: #fff;
+      }
+    }
+  }
+
+  .loop {
+    color:#fff;
+    margin-left: 5px;
+    float: left;
+    &.looped {
+      color:$golden;
+    }
+  }
+
+  .next, .previous {
+    margin-left: 5px;
+    &.disable {
+      color: $white;
+    }
+  }
+}
+
+body.index {
+
+  .top-bar .name h1 {
+    display:none;
+  }
+
+  .contain-to-grid {
+    border-bottom:none
+  }
+
+
+  &.scrolling {
+    .contain-to-grid {
+      border-bottom:2px solid $pink;
+    }
+    .top-bar .name h1 {
+      display:block;
+    }
+  }
+  .demo {
+    margin: 1em 0 2.5em;
+    p {
+      min-height:75px;
+    }
+  }
+}
+
+// captions
+body.caption {
+  .url-form {
+    margin-top: 2em;
+  }
+  .caption-actions {
+    display:none;
+    margin-bottom: 5em;
+  }
+}
+
+#caption {
+  display:none;
+  position: absolute;
+  z-index: 10000;
+  top: 10px;
+  left: 10px;
+  background: #fff;
+  padding: 10px;
+}
+
+// Test
+body.test {
+  .success {
+    background: #43AC6A;
+  }
+  .caution {
+    background: #f08a24;
+  }
+  .error {
+    background: #de2b0f;
+  }
+
+  .row .test-case {
+    border: 1px solid #aaa;
+    margin: 15px auto;
+    padding: 10px;
+  }
+
+  .test-mark i {
+    color: #fff;
+    font-size: 3em;
+    display: block;
+    margin: 10px auto;
+    width: 50px;
+  }
+
+  .video {
+    margin-top: 1rem;
+    position: relative;
+    padding-top: 1.5625rem;
+    padding-bottom: 67.5%;
+    height: 0;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+body.progresses {
+  .content {
+    margin-top: 1em;
+  }
+  .contain-to-grid {
+    border-bottom:none;
+  }
+  .progress {
+    border: none;
+    padding: 0;
+    height: 5px;
+    position: fixed;
+    top: 40px;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    text-align: right;
+    .meter {
+      position:absolute;
+      width:0%;
+      text-align: right;
+      z-index:1;
+      background:$pink;
+    }
+    .current-time {
+      display:none;
+      color: #fff;
+      font-size: 12px;
+      padding-right: 5px;
+    }
+    .duration {
+      display:none;
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      font-size: 12px;
+      z-index:0;
+    }
+    &.open {
+      .duration {
+        display:block;
+      }
+      .current-time {
+        display:inline;
+      }
+    }
+  }
+}
+
+body.music {
+
+  .controls {
+    background:$grey;
+  }
+
+  .track .iframe {
+    height: 0;
+    width: 0;
+    overflow: hidden;
+  }
+}
+
+//
+body.soundboard {
+  #boards  {
+    margin-top: 2em;
+    iframe {
+      height: 0;
+      width: 0;
+      overflow: hidden;
+    }
+    li {
+      position:relative;
+      i {
+        display: block;
+        position: absolute;
+        top: 60px;
+        left: 42%;
+        color: white;
+        font-size: 39px;
+      }
+      .fa-pause {
+        display:none;
+      }
+
+      &.playing {
+        .fa-play {
+          display:none;
+        }
+        .fa-pause {
+          display:block;
+        }
+
+      }
+
+    }
+  }
+}

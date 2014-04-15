@@ -3,31 +3,187 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Player.js</title>
-    <meta name="description" content="A library for programically interfacing with Embeds.">
+    <title>Player.js: Control embedded video and audio across multiple providers</title>
+    <meta name="description" content="A JavaScript library that allows developers to programmatically control video and audio within IFrames across a number of services.">
+    <link href='http://fonts.googleapis.com/css?family=Cantarell|Fjalla+One' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/playerjs.css" />
     <script src="scripts/libs/modernizr.js"></script>
   </head>
+  <body class="index">
+
+  <div class="contain-to-grid sticky">
+    <nav class="top-bar" data-topbar data-options="sticky_on: large">
+      <ul class="title-area">
+        <li class="name">
+          <h1>Player.js</h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li class="active"><a href="https://github.com/embedly/player.js"><i class="fa fa-github"></i> Code</a></li>
+          <li class="has-dropdown">
+            <a href="#">Demos</a>
+            <ul class="dropdown">
+              <li><a href="/article.html">Article</a></li>
+              <li><a href="/progress.html">Progress</a></li>
+              <li><a href="/captions.html"> Captions</a></li>
+              <li><a href="/scroll.html">Scroll</a></li>
+              <li><a href="/resume.html">Resume</a></li>
+              <li><a href="/music.html">Music</a></li>
+              <li><a href="/soundboard.html">Soundboard</a></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </nav>
+  </div>
+  <div class="header">
+    <div class="row">
+      <div class="large-6 columns">
+        <h1>Player.js</h1>
+        <p class="lead">
+          A JavaScript library that allows developers to programmatically control video and audio within IFrames across a number of services.
+        </p>
+        <p>
+          Publishers can also expose a JavaScript API for developers to build rich applications with their media.
+        </p>
+      </div>
+      <div class="large-6 columns">
+        <div class="resp"></div>
+        <div class="row controls">
+          <div class="large-1 columns play paused">
+            <i class="fa fa-play"></i>
+            <i class="fa fa-pause"></i>
+          </div>
+          <div class="large-10 columns">
+            <div class="progress">
+              <span class="meter"></span>
+            </div>
+          </div>
+
+          <div class="large-1 columns">
+            <div class="mute">
+              <i class="fa fa-volume-off"></i>
+              <i class="fa fa-volume-up"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
-    <div class="large-5 columns large-centered">
-      <h1>Player.js</h1>
+    <div class="large-4 columns">
+      <h3>Open Standard</h3>
       <p>
-        A JavaScript library for interacting with iframes that support Player.js spec.
+        Player.js is an Open Specification licensed under the Creative Commons Attribution License.
       </p>
+      <a href="https://github.com/embedly/player.js/blob/master/SPEC.rst">View The Spec <i class="fa fa-chevron-right "></i></a>
 
-      <h2>Demos</h2>
-      <ul>
-        <li><a href="captions.html">Captions</a></li>
-        <li><a href="progress.html">Progress</a></li>
-        <li><a href="article.html">Article</a></li>
-        <li><a href="http://embed.ly/docs/tutorials/music">Music</a></li>
-      </ul>
+    </div>
+    <div class="large-4 columns">
+      <h3>Compatibility Tester</h3>
+      <p>
+        Have an integration that you would like to test? Player.js has a handy tester to spot bugs.
+      </p>
+      <a href="/test.html">Test a URL <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-4 columns">
+      <h3>Become a Provider</h3>
+      <p>
+        Want to support Player.js as a provider? We have written a few Adapters to make your life easier.
+      </p>
+      <a href="https://github.com/embedly/player.js#adapters">View Adapters <i class="fa fa-chevron-right "></i></a>
+    </div>
+  </div>
+
+  <div class="breaker">
+    <div class="row">
+      <div class="large-12 columns">
+        <h2>Demos</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-3 columns demo">
+      <h3><a href="captions.html"><i class="fa fa-comment-o"></i></a> Captions</h3>
+      <p>
+        Overlay captions over media to make it your own.
+      </p>
+      <a href="captions.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-3 columns demo">
+      <h3><a href="progress.html"><i class="fa fa-forward"></i></a> Progress</h3>
+      <p>
+        Show a progress bar of the currently playing video on top of the page.
+      </p>
+      <a href="progress.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-3 columns demo">
+      <h3><a href="article.html"><i class="fa fa-file-text-o"></i></a> Article</h3>
+      <p>
+        Tips and tricks for showing media in articles.
+      </p>
+      <a href="article.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-3 columns demo">
+      <h3><a href="scroll.html"><i class="fa fa-angle-double-down"></i></a> Scroll</h3>
+      <p>
+        Play and pause media when it's in view of the user.
+      </p>
+      <a href="scroll.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-3 columns demo">
+      <h3><a href="resume.html"><i class="fa fa-refresh"></i></a> Resume</h3>
+      <p>
+        Ask a user if they would like to resume a video when they come back to your site.
+      </p>
+      <a href="resume.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-3 columns demo">
+      <h3><a href="music.html"><i class="fa fa-headphones"></i></a> Music</h3>
+      <p>
+        Create a little music player out of media from across multiple providers.
+      </p>
+      <a href="music.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-3 columns demo">
+      <h3><a href="soundboard.html"><i class="fa fa-th-large"></i></a> Soundboard</h3>
+      <p>
+        You know, click around and play clips?
+      </p>
+      <a href="soundboard.html">View Demo <i class="fa fa-chevron-right "></i></a>
+    </div>
+    <div class="large-3 columns demo">
+
+      <!--
+      <h3><i class="fa fa-bar-chart-o"></i> Tracking</h3>
+      <p>
+        Send player data to Google Analytics.
+      </p>
+      <a href="tracking.html">View Demo <i class="fa fa-chevron-right "></i></a>-->
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="row">
+      <div class="large-12 columns text-right">
+        <p>Built in Boston <a href="http://embed.ly">@embedly</a></p>
+      </div>
     </div>
   </div>
 
   <script src="scripts/libs/jquery.js"></script>
   <script src="scripts/libs/foundation.min.js"></script>
+  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.8.min.js"></script>
+  <script src="scripts/common.js"></script>
+  <script src="scripts/index.js"></script>
   <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
   <script>
     $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';

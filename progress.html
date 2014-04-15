@@ -3,57 +3,74 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Player.js Progress Demo</title>
-    <meta name="description" content="A library for programically interfacing with Embeds.">
-    <link rel="stylesheet" href="css/foundation.min.css" />
+    <title>Player.js: Progress Demo</title>
+    <meta name="description" content="Give users a slight visual cue of how long they have been watching a video and how long they have to go.">
+    <link href='http://fonts.googleapis.com/css?family=Cantarell|Fjalla+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/playerjs.css" />
     <script src="scripts/libs/modernizr.js"></script>
-    <style>
-    .progress {
-      border: none;
-      padding: 0;
-      height: 5px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-    }
-    .meter {
-      width:0%;
-
-    }
-    .row {
-      margin-top:20px;
-    }
-    .actions{
-      position: fixed;
-      top: 5px;
-      right: 6px;
-      z-index: 100;
-    }
-    </style>
   </head>
+  <body class="progresses">
+
+  <div class="contain-to-grid sticky">
+    <nav class="top-bar" data-topbar data-options="sticky_on: large">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="/">Player.js</a></h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li class="active"><a href="https://github.com/embedly/player.js"><i class="fa fa-github"></i> Code</a></li>
+          <li class="has-dropdown">
+            <a href="#">Demos</a>
+            <ul class="dropdown">
+              <li><a href="/article.html">Article</a></li>
+              <li><a href="/progress.html">Progress</a></li>
+              <li><a href="/captions.html"> Captions</a></li>
+              <li><a href="/scroll.html">Scroll</a></li>
+              <li><a href="/resume.html">Resume</a></li>
+              <li><a href="/music.html">Music</a></li>
+              <li><a href="/soundboard.html">Soundboard</a></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </nav>
+  </div>
 
   <div class="progress">
-    <span class="meter"></span>
+    <span class="meter">
+      <span class="current-time"></span>
+    </span>
+    <span class="duration"></span>
   </div>
 
-  <div class="actions">
-    <a id="prev"><i class="fa fa-step-backward"></i></a>
-    <a id="play"><i class="fa fa-play"></i></a>
-    <a id="next"><i class="fa fa-step-forward"></i></a>
-  </div>
-
-  <div class="row">
-    <div class="large-12 columns large-centered">
+  <div class="row content">
+    <div class="large-4 columns">
+      <h1>Progress</h1>
+      <p>
+        It's somewhat common to give users a slight visual cue of how long they have been watching a video and how long they have to go.
+      </p>
+      <p>
+        You'll notice above a progress bar above moving to the right. If you hover over you will see the some time information.
+      </p>
+      <p>
+        <a class="button" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/scripts/progress.js">Code</a>
+        <a class="button" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/progress.html">HTML</a>
+      </p>
+    </div>
+    <div class="large-8 columns">
       <div id="result"></div>
+    </div>
   </div>
 
   <script src="scripts/libs/jquery.js"></script>
   <script src="scripts/libs/foundation.min.js"></script>
   <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
-  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.7.min.js"></script>
+  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.8.min.js"></script>
   <script src="scripts/progress.js"></script>
   <script>
     $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';

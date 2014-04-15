@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Player.js: Caption Demo</title>
-    <meta name="description" content="Overlay fun messages on videos with Player.js">
+    <title>Player.js: Music Demo</title>
+    <meta name="description" content="Create a simple music player across a number of different services.">
     <link href='http://fonts.googleapis.com/css?family=Cantarell|Fjalla+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
     <link rel="stylesheet" href="css/foundation.min.css" />
     <link rel="stylesheet" href="css/playerjs.css" />
     <script src="scripts/libs/modernizr.js"></script>
   </head>
-  <body class="caption">
+  <body class="music">
 
   <div class="contain-to-grid sticky">
     <nav class="top-bar" data-topbar data-options="sticky_on: large">
@@ -44,63 +44,68 @@
   <div class="row">
 
     <div class="large-4 columns">
-      <h1>Captions</h1>
+      <h1>Music</h1>
       <p>
-        Enter a URL that you wish to add captions to.
+        Music is hosted on a number of different sites, but to create a playlist we need to be able to interact with the media players for each.
       </p>
       <p>
-        <a href="/captions.html?url=http%3A%2F%2Fvimeo.com%2F18150336&c0=0-1%3A%3AThese&c1=2-3%3A%3Aare&c2=4-5%3A%3Acaptions&c3=6-7%3A%3Ahave&c4=8-9%3A%3Afun&c5=10-11%3A%3Awith&c6=12-13%3A%3Athem" class="button">View Example</a>
+        Player.js allows us to do this.
       </p>
       <p>
-        <a class="button secondary" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/scripts/captions.js">Code</a>
-        <a class="button secondary" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/captions.html">HTML</a>
+        <a class="button" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/scripts/music.js">Code</a>
+        <a class="button" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/music.html">HTML</a>
       </p>
     </div>
 
-    <div class="large-8 columns">
-      <form class="url-form">
-        <label>Url</label>
-
-        <div class="row collapse">
-          <div class="small-10 columns">
-            <input id="url" type="text" value="http://vimeo.com/18150336"/>
-          </div>
-          <div class="small-2 columns">
-            <a href="#" class="button postfix">Go</a>
+    <div class="large-8 columns content">
+      <div class="row">
+        <div class="large-10 large-centered columns">
+          <div class="controls">
+            <div class="row">
+              <div class="large-1 medium-1 small-1 columns">
+                <a class="play paused">
+                  <i class="fa fa-play"></i>
+                  <i class="fa fa-pause"></i>
+                </a>
+              </div>
+              <div class="large-8 medium-8 small-8 columns">
+                <div class="progress">
+                  <span class="meter"></span>
+                </div>
+              </div>
+              <div class="large-3 medium-3 small-3 columns">
+                <a class="volume">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </a>
+                <a class="loop">
+                  <i class="fa fa-repeat"></i>
+                </a>
+                <a class="previous">
+                  <i class="fa fa-step-backward"></i>
+                </a>
+                <a class="next">
+                  <i class="fa fa-step-forward"></i>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
-      </form>
-
-      <div id="result"></div>
-
-      <div id="captions">
-        <form></form>
       </div>
 
-      <div class="row caption-actions">
-        <div class="large-4 columns">
-          <a href="#" class="play">Restart</play>
-          <a href="#" class="share">Share</play>
-        </div>
-        <div class="large-8 columns text-right">
-          <a href="#" id="add">Add another caption <i class="fa fa-plus"></i></a>
-        </div>
-      </div>
+      <ul id="tracks"></ul>
     </div>
-  </div>
-
-  <div id="share" class="reveal-modal small" data-reveal>
-    <h2>Share URL</h2>
-    <textarea class="modal-results"></textarea>
-    <a class="close-reveal-modal">&#215;</a>
   </div>
 
   <script src="scripts/libs/jquery.js"></script>
   <script src="scripts/libs/foundation.min.js"></script>
   <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
-
   <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.8.min.js"></script>
-  <script src="scripts/captions.js"></script>
+  <script src="scripts/common.js"></script>
+  <script src="scripts/music.js"></script>
   <script>
     $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';
     $(document).foundation();

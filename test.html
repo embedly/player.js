@@ -1,66 +1,47 @@
-
 <!doctype html>
 <html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Player.js IFrame Compatibility Tester</title>
-    <meta name="description" content="A library for programically interfacing with Embeds.">
-    <link rel="stylesheet" href="css/foundation.min.css" />
+    <title>Player.js: Compatibility Tester</title>
+    <meta name="description" content="Enter the URL of the IFrame SRC URL you wish to test. We will highlight errors.">
+    <link href='http://fonts.googleapis.com/css?family=Cantarell|Fjalla+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/playerjs.css" />
     <script src="scripts/libs/modernizr.js"></script>
-    <style>
-
-    .success {
-      background: #43AC6A;
-    }
-    .caution {
-      background: #f08a24;
-    }
-    .error {
-      background: #de2b0f;
-    }
-
-    .row .test-case {
-      border: 1px solid #aaa;
-      margin: 15px auto;
-      padding: 10px;
-    }
-
-    .test-mark i {
-      color: #fff;
-      font-size: 3em;
-      display: block;
-      margin: 10px auto;
-      width: 50px;
-    }
-
-    .video {
-      margin-top: 1rem;
-      position: relative;
-      padding-top: 1.5625rem;
-      padding-bottom: 67.5%;
-      height: 0;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-
-    .video iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    </style>
   </head>
+  <body class="test">
 
-  <body>
-
+  <div class="contain-to-grid sticky">
+    <nav class="top-bar" data-topbar data-options="sticky_on: large">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="/">Player.js</a></h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li class="active"><a href="https://github.com/embedly/player.js"><i class="fa fa-github"></i> Code</a></li>
+          <li class="has-dropdown">
+            <a href="#">Demos</a>
+            <ul class="dropdown">
+              <li><a href="/article.html">Article</a></li>
+              <li><a href="/progress.html">Progress</a></li>
+              <li><a href="/captions.html"> Captions</a></li>
+              <li><a href="/scroll.html">Scroll</a></li>
+              <li><a href="/resume.html">Resume</a></li>
+              <li><a href="/music.html">Music</a></li>
+              <li><a href="/soundboard.html">Soundboard</a></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </nav>
+  </div>
     <div class="row">
       <div class="large-12 columns">
-
         <div class="row">
           <div class="large-6 columns">
             <h1>Player.js IFrame Compatibility Tester</h1>
@@ -79,13 +60,10 @@
               </form>
             </div>
           </div>
-
           <div class="large-6 columns">
             <div id="iframe" class="video"></div>
           </div>
         </div>
-
-
         <h2>Events</h2>
 
         <div id="eventReady" class="row test-case">
@@ -316,11 +294,11 @@
     </div>
 
 
-    <div id="failure" class="reveal-modal" data-reveal>
+    <div id="failure" class="reveal-modal small" data-reveal>
       <h2>We stopped the tests because of failures.</h2>
       <p class="lead">Please fix the errors below. Here are some links that might help:</p>
       <ul>
-        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/README.rst">Player.js Readme</a></li>
+        <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/README.rst">Player.js README</a></li>
         <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/SPEC.rst">Player.js Spec</a></li>
         <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/src/adapters/mock.js">Mock Adapter</a></li>
         <li><a target="_blank" href="https://github.com/embedly/player.js/blob/master/src/adapters/html.js">HTML5 Video Adapter</a></li>
@@ -331,7 +309,7 @@
       <a class="close-reveal-modal">&#215;</a>
     </div>
 
-    <div id="success" class="reveal-modal" data-reveal>
+    <div id="success" class="reveal-modal small" data-reveal>
       <h2>Success</h2>
       <p class="lead">We finished testing your implementation.</p>
       <p class="modal-results"></p>
@@ -341,7 +319,7 @@
     <script src="scripts/libs/jquery.js"></script>
     <script src="scripts/libs/foundation.min.js"></script>
     <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
-    <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.7.min.js"></script>
+    <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.8.min.js"></script>
     <script src="scripts/test.js"></script>
     <script>
       $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';

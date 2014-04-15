@@ -3,52 +3,75 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Player.js Article Demo</title>
-    <meta name="description" content="A library for programically interfacing with Embeds.">
-    <link rel="stylesheet" href="css/foundation.min.css" />
+    <title>Player.js: Article Demo</title>
+    <meta name="description" content="A few tips and tricks to using Player.js within articles.">
+    <link href='http://fonts.googleapis.com/css?family=Cantarell|Fjalla+One' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/foundation.min.css" />
+    <link rel="stylesheet" href="css/playerjs.css" />
     <script src="scripts/libs/modernizr.js"></script>
-    <style>
-    .progress {
-      border: none;
-      padding: 0;
-      height: 5px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-    }
-    .meter {
-      width:0%;
-
-    }
-    .row {
-      margin-top:20px;
-    }
-    .actions{
-      position: fixed;
-      top: 5px;
-      right: 6px;
-      z-index: 100;
-    }
-    </style>
   </head>
+  <body class="article">
+
+  <div class="contain-to-grid sticky">
+    <nav class="top-bar" data-topbar data-options="sticky_on: large">
+      <ul class="title-area">
+        <li class="name">
+          <h1><a href="/">Player.js</a></h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+      </ul>
+      <section class="top-bar-section">
+        <ul class="right">
+          <li class="active"><a href="https://github.com/embedly/player.js"><i class="fa fa-github"></i> Code</a></li>
+          <li class="has-dropdown">
+            <a href="#">Demos</a>
+            <ul class="dropdown">
+              <li><a href="/article.html">Article</a></li>
+              <li><a href="/progress.html">Progress</a></li>
+              <li><a href="/captions.html"> Captions</a></li>
+              <li><a href="/scroll.html">Scroll</a></li>
+              <li><a href="/resume.html">Resume</a></li>
+              <li><a href="/music.html">Music</a></li>
+              <li><a href="/soundboard.html">Soundboard</a></li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </nav>
+  </div>
 
   <div class="row">
     <div class="large-4 columns">
       <h3>Stats</h3>
       <ul>
-        <li>Plays: <span id="play">0</span></li>
-        <li>Pause: <span id="pause">0</span></li>
-        <li>Duration: <span id="duration">0</span></li>
-        <li>Finished: <span id="finsh">0</span></li>
+        <li><b>Read Time:</b> <span id="read">0</span></li>
+        <li><b>Watch Time:</b> <span id="duration">0</span></li>
+        <li><b>Plays:</b> <span id="play">0</span></li>
+        <li><b>Pause:</b> <span id="pause">0</span></li>
+        <li><b>Finished:</b> <span id="finsh">0</span></li>
       </ul>
+      <p>
+        <a class="button" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/scripts/article.js">Code</a>
+        <a class="button" target="_blank" href="https://github.com/embedly/player.js/blob/gh-pages/article.html">HTML</a>
+      </p>
     </div>
     <div class="large-6 columns">
       <h1>An Intro to Video</h1>
       <p>
-    Curabitur interdum, mi at egestas ornare, massa tortor sollicitudin orci, ut vestibulum nisl odio sed sem. Proin sit amet risus est. Donec et fermentum nibh. Ut accumsan tempor congue. Nunc sed gravida elit, non laoreet sapien. Sed quam nisl, eleifend quis volutpat eget, sagittis sed lacus. Phasellus mollis mi a turpis consequat sollicitudin quis vel leo. Vestibulum vel sapien eu urna vehicula varius sed nec est. In in nisl in nisl faucibus vulputate. Morbi dapibus iaculis erat, eleifend venenatis elit facilisis in. Morbi in vestibulum odio. Phasellus sed metus posuere, iaculis sapien ultricies, feugiat enim. Maecenas semper justo nec nulla adipiscing, vitae congue erat rutrum.
+        When we think articles we think reading, not watching. We do however see the rise of articles with multiple videos and some interesting places to implement Player.js.
+      </p>
+      <p>
+        This is an example article with 3 videos. You will notice a few things.
+      </p>
+      <ul>
+        <li>Reading time is being updated right now, when you start watching a video, watch time will start increasing.</li>
+        <li>We track the number of plays, pauses and finishes of a particular video.</li>
+        <li>When you click play, the title of the document changes to include a play icon.</li>
+        <li>If you play one video and then play the next, the first video will pause.</li>
+      </ul>
+      <p>
+
       </p>
     </div>
     <div class="large-2 columns"></div>
@@ -103,12 +126,10 @@
   </div>
 
 
-
-
   <script src="scripts/libs/jquery.js"></script>
   <script src="scripts/libs/foundation.min.js"></script>
   <script src="http://cdn.embed.ly/jquery.embedly-3.1.1.min.js"></script>
-  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.7.min.js"></script>
+  <script type="text/javascript" src="http://cdn.embed.ly/player-0.0.8.min.js"></script>
   <script src="scripts/article.js"></script>
   <script>
     $.embedly.defaults.key = '3ee528c9eb4b4908b268ce1ace120c92';

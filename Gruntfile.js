@@ -3,6 +3,8 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Project configuration.
   grunt.initConfig({
@@ -10,9 +12,24 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          keepalive: true,
           port: 8000,
           base: '.'
+        }
+      }
+    },
+    watch: {
+      scripts: {
+        files: 'css/*.scss',
+        tasks: ['sass'],
+        options: {
+          interrupt: true
+        }
+      }
+    },
+    sass: {
+      dist: {
+        files: {
+          'css/playerjs.css': 'css/playerjs.scss'
         }
       }
     },
@@ -35,4 +52,7 @@ module.exports = function(grunt) {
       all: ['Gruntfile.js', 'scripts/*.js']
     }
   });
+
+  grunt.registerTask("default", ['sass', 'connect', 'watch']);
+
 };

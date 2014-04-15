@@ -1,11 +1,9 @@
 /*global jQuery:true, playerjs:true */
 
-(function($, document){
+(function($, document, window){
 
   var URLS = [
-    'https://vimeo.com/46071455',
-    'http://www.youtube.com/watch?v=JQKELDNnzUQ',
-    'http://www.youtube.com/watch?v=BmFEoCFDi-w'
+    'https://vimeo.com/88829079'
   ];
 
   var DATA = [];
@@ -14,6 +12,7 @@
     duration = 0,
     index = 0;
 
+  //Display the embed.
   var display = function(obj, autoplay){
     var ratio = ((obj.height/obj.width)*100).toPrecision(4) + '%';
     var $div = $('<div class="flex-video"><span id="caption"></span></div>');
@@ -22,9 +21,11 @@
     $div.css('padding-bottom', ratio);
     $('#result').append($div);
 
+    // Set up the player.
     player = new playerjs.Player($('iframe')[0]);
     player.on('ready', function(){
-      window.player = player;
+      player.unmute();
+
       player.getDuration(function(d){
         duration = d;
       });
@@ -32,68 +33,34 @@
       if (autoplay){
         player.play();
       }
-
     });
 
+    var $meter = $('.meter'),
+      $duration = $('.duration'),
+      $currentTime = $('.current-time');
+
+    // Set up the timeupdate to move the meter.
     player.on('timeupdate', function(data){
-      $('.meter').css('width', ((data.seconds/data.duration) * 100) + '%');
+      $meter.css('width', ((data.seconds/data.duration) * 100) + '%');
+      $duration.text(data.duration.toFixed(1));
+      $currentTime.text(data.seconds.toFixed(1));
     });
-
-    player.on('play', function(){
-      if ($('#play i').hasClass('fa-play')){
-        $('#play i').addClass('fa-pause').removeClass('fa-play');
-      }
-    });
-
-    player.on('pause', function(){
-      if ($('#play i').hasClass('fa-pause')){
-        $('#play i').addClass('fa-play').removeClass('fa-pause');
-      }
-    });
-
   };
-
-  var play = function(){
-    player.play();
-    if ($('#play i').hasClass('fa-play')){
-      $('#play i').addClass('fa-pause').removeClass('fa-play');
-    }
-  };
-
-  var pause = function(){
-    player.pause();
-    if ($('#play i').hasClass('fa-pause')){
-      $('#play i').addClass('fa-play').removeClass('fa-pause');
-    }
-  };
-
-  var prev = function(){
-    if (index === 0){
-      return false;
-    }
-    index += -1;
-    display(DATA[index], true);
-  };
-
-  var next = function(){
-    if (index === DATA.length-1){
-      return false;
-    }
-    index += 1;
-    display(DATA[index], true);
-  };
-
 
   $(document).on('ready', function(){
 
+    // Go get the embed code from Embedly.
     $.embedly.oembed(URLS)
-      .done(function(objs){
-        DATA = objs;
-        display(DATA[0]);
+      .progress(function(obj){
+        display(obj, true);
       });
 
-    var $progress = $('.progress');
+    // Set up the progress bar are the top of the page.
+    var $progress = $('.progress'),
+      $duration = $('.duration'),
+      $currentTime = $('.current-time');
 
+    // On progress click, seek to a position.
     $progress.on('click', function(e){
       var percent = ((e.pageX-$progress.offset().left)/$progress.width());
       var seek = percent*duration;
@@ -101,26 +68,28 @@
       player.setCurrentTime(seek);
     });
 
-    $progress.on('mouseenter', function(){
+    // Set up the expand animation.
+    var animateUp = function(){
       $(this).animate({
-        height:20
+        height:5,
+        duration:10
+      }, function(){
+        $progress.removeClass('open');
+        $progress.one('mouseenter', animateDown);
       });
-    }).on('mouseleave', function(){
+    };
+
+    var animateDown = function(){
       $(this).animate({
-        height:5
+        height:20,
+        duration:10
+      }, function(){
+        $progress.addClass('open');
+        $progress.one('mouseleave', animateUp);
       });
-    });
+    };
 
-    $('#play').on('click', function(){
-      if ($(this).find('i').hasClass('fa-play')){
-        play();
-      } else {
-        pause();
-      }
-
-    });
-    $('#prev').on('click', prev);
-    $('#next').on('click', next);
+    $progress.one('mouseenter', animateDown);
   });
 
-})(jQuery, document);
+})(jQuery, document, window);
