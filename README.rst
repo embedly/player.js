@@ -345,3 +345,20 @@ paused information.
       adapter.ready();
     });
 
+
+JWPlayerAdapter
+""""""""""""""
+An adapter for `JW Player <http://www.jwplayer.com>`_.
+::
+
+    jwplayer("video").setup({
+      file: "/lib/videos/demo.mp4",
+      height: '100%',
+      width: '100%'
+    });
+
+    var adapter = new playerjs.JWPlayerAdapter(jwplayer());
+
+    jwplayer().onReady(function(){
+      adapter.ready();
+    });
