@@ -94,4 +94,15 @@
     }
   });
 
+
+  //Go to
+  $('.goto-demos').on('click', function(){
+    console.log('hi')
+    $('html, body').animate({
+        scrollTop: $("a#demos").offset().top
+     }, 200);
+    return false;
+  });
+
+
 })(jQuery, document, window);
