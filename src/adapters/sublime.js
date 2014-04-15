@@ -29,7 +29,7 @@ playerjs.SublimeAdapter.prototype.methods = [
 
 playerjs.SublimeAdapter.prototype.init = function(player){
 
-  playerjs.assert(player, 'playerjs.VideoJSReceiver requires a player object');
+  playerjs.assert(player, 'playerjs.SublimeAdapter requires a player object');
 
   // Set up the actual receiver
   var receiver = this.receiver = new playerjs.Receiver(this.events, this.methods);
