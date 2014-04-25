@@ -65,7 +65,7 @@ playerjs.Receiver.prototype.receive = function(e){
   playerjs.log('Receiver.receive', e, data);
 
   // Nothing for us to do.
-  if (!data.method){
+  if (data.context !== playerjs.POST_MESSAGE_CONTEXT || !data.method){
     return false;
   }
 
@@ -155,6 +155,7 @@ playerjs.Receiver.prototype.send = function(event, value, listener){
     return false;
   }
   var data = {
+    context: playerjs.POST_MESSAGE_CONTEXT,
     event: event
   };
 
