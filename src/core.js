@@ -2,6 +2,7 @@ var playerjs = {};
 
 playerjs.DEBUG = false;
 playerjs.POST_MESSAGE = !!window.postMessage;
+playerjs.POST_MESSAGE_CONTEXT = 'player.js';
 
 /*
 * Utils.

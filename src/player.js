@@ -107,6 +107,8 @@ playerjs.Player.prototype.init = function(elem, options){
 };
 
 playerjs.Player.prototype.send = function(data, callback, ctx){
+  data.context = playerjs.POST_MESSAGE_CONTEXT;
+
   // We are expecting a response.
   if (callback) {
     // Create a UUID
@@ -146,6 +148,11 @@ playerjs.Player.prototype.receive = function(e){
     data = JSON.parse(e.data);
   } catch (err){
     // Not a valid response.
+    return false;
+  }
+
+  // abort if this message wasn't a player.js message
+  if (data.context !== playerjs.POST_MESSAGE_CONTEXT) {
     return false;
   }
 
@@ -302,7 +309,8 @@ playerjs.addEvent(window, 'message', function(e){
   }
 
   // We need to determine if we are ready.
-  if (data.event === 'ready' && data.value.src){
+  if (data.context === playerjs.POST_MESSAGE_CONTEXT && data.event === 'ready' &&
+      data.value && data.value.src){
     playerjs.READIED.push(data.value.src);
   }
 });
