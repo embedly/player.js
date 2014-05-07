@@ -69,6 +69,11 @@ playerjs.Receiver.prototype.receive = function(e){
     return false;
   }
 
+  // make sure the context is correct.
+  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT){
+    return false;
+  }
+
   // Make sure we have a valid method.
   if (playerjs.METHODS.all().indexOf(data.method) === -1){
     this.emit('error', {
@@ -154,7 +159,10 @@ playerjs.Receiver.prototype.send = function(event, value, listener){
     playerjs.log('Receiver.send.reject', event, value, listener);
     return false;
   }
+
   var data = {
+    context: playerjs.CONTEXT,
+    version: playerjs.VERSION,
     event: event
   };
 

@@ -53,10 +53,19 @@ These are ``play``, ``pause`` and ``getDuration`` are all examples of methods.
 They have a common format::
 
   {
+    context: 'player.js',
+    version: 'version'
     method: 'methodName',
     value: 'methodValue',
-    listener: 'listenerName'
+    listener: 'listenerName',
   }
+
+``context``
+  The context of the postMessage data to avoid conflicts. Will always be
+  ``player.js``.
+
+``version``
+  The version of the library that you are using. Currently this is ``0.0.10``.
 
 ``method``
   The method name that we wish to invoke.
@@ -79,6 +88,8 @@ following message to the parent.
 ::
 
   {
+    context: 'player.js',
+    version: '0.0.10',
     event: 'methodName',
     listener: 'listenerName',
     value: 'returnValue'
@@ -94,6 +105,8 @@ No events should be passed back unless the parent explicitly asks for them. To
 add a listener we send the following message::
 
   {
+    context: 'player.js',
+    version: 'version',
     method: 'addEventListener',
     value: 'event',
     listener: 'listenerName'
@@ -102,6 +115,8 @@ add a listener we send the following message::
 When the event is fired, the parent will receive the following event data::
 
   {
+    context: 'player.js',
+    version: 'version',
     event: 'event',
     listener: 'listenerName',
     value: {}
@@ -116,6 +131,8 @@ It's helpful to have a quick example of the JavaScript before moving forward.
   // Play the video
   document.getElementById('#iframe').contentWindow.postMessage(
     JSON.stringify({
+      context: 'player.js',
+      version: 'version',
       method: 'play'
     })
   );
@@ -125,13 +142,14 @@ It's helpful to have a quick example of the JavaScript before moving forward.
   var iframe = document.getElementById('#iframe'),
     origin = iframe.src.split('/', 3).join('/');
 
-  var play = function(){
-    console.log('play);
+  var played = function(){
+    console.log('played');
   };
 
   window.addEventListener('message', function(){
     if (e.origin === origin){
-      if (e.event === play){
+      var data = JSON.parse(e.data);
+      if (data.context === 'player.js' && data.event === play){
         played();
       }
     }
@@ -139,9 +157,11 @@ It's helpful to have a quick example of the JavaScript before moving forward.
 
   iframe.contentWindow.postMessage(
     JSON.stringify({
+      context: 'player.js',
+      version: 'version',
       method: 'addEventListener',
-      value: 'event'
-    })
+      value: 'play'
+    });
   );
 
 
@@ -248,6 +268,8 @@ Methods
   that listener, otherwise remove all listeners::
 
     {
+      context: 'player.js',
+      version: 'version',
       method: 'removeEventListener',
       value: 'event',
       listener: 'listenerName'
@@ -259,6 +281,8 @@ Methods
   Add an event listener::
 
     {
+      context: 'player.js',
+      version: 'version',
       method: 'addEventListener',
       value: 'event',
       listener: 'listenerName'
@@ -274,6 +298,8 @@ Events that can be listened to.
   of listening to the event.::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'ready',
       value: {
         src: 'srcOfIframe',
@@ -314,6 +340,8 @@ Events that can be listened to.
   Fires when the media is loading additional media for playback::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'progress',
       value: {
         seconds: 10,
@@ -325,6 +353,8 @@ Events that can be listened to.
   Fires during playback::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'timeupdate',
       value: {
         seconds: 10,
@@ -336,6 +366,8 @@ Events that can be listened to.
   Fires when the video starts to play::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'play',
     }
 
@@ -343,6 +375,8 @@ Events that can be listened to.
   Fires when the video is paused::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'pause',
     }
 
@@ -350,6 +384,8 @@ Events that can be listened to.
   Fires when the video has ended::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'ended',
     }
 
@@ -357,6 +393,8 @@ Events that can be listened to.
   Fires when something goes wrong::
 
     {
+      context: 'player.js',
+      version: 'version',
       event: 'error',
       value: {
         code: -1

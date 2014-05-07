@@ -11,6 +11,17 @@ var isNumber= function(obj){
   return Object.prototype.toString.call(obj) === "[object Number]";
 };
 
+var removeEvent = function(elem, type, eventHandle) {
+  if (!elem) { return; }
+  if ( elem.removeEventListener ) {
+    elem.removeEventListener( type, eventHandle, false );
+  } else if ( elem.detachEvent ) {
+    elem.detachEvent( "on" + type, eventHandle );
+  } else {
+    elem["on"+type]=null;
+  }
+};
+
 function testCases(){
   var player = this;
 
@@ -57,6 +68,24 @@ function testCases(){
     });
 
     player.play();
+  });
+
+  // Make sure we are receiving context.
+  asyncTest("context", 2, function(){
+
+    var onMessage = function(e){
+      var data = JSON.parse(e.data);
+
+      ok(data.context === playerjs.CONTEXT);
+      ok(data.version === playerjs.VERSION);
+      removeEvent(window, 'message', onMessage);
+      start();
+    };
+
+    playerjs.addEvent(window, 'message', onMessage);
+
+    // This will force the receiver to echo.
+    player.on('ready', function(){});
   });
 
   // Test to make sure we can attach multiple listeners to the same event.
