@@ -1,8 +1,14 @@
 var playerjs = {};
 
 playerjs.DEBUG = false;
+playerjs.VERSION = '0.0.10';
+playerjs.CONTEXT = 'player.js';
 playerjs.POST_MESSAGE = !!window.postMessage;
-playerjs.POST_MESSAGE_CONTEXT = 'player.js';
+
+// Currently, CONTEXT will render a number of providers useless until they
+// upgrade their receivers. It's a bit of a chicken in the egg problem, so
+// the 0.0.10 release will include this flag.
+playerjs.ENABLE_CONTEXT = false;
 
 /*
 * Utils.

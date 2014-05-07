@@ -107,7 +107,9 @@ playerjs.Player.prototype.init = function(elem, options){
 };
 
 playerjs.Player.prototype.send = function(data, callback, ctx){
-  data.context = playerjs.POST_MESSAGE_CONTEXT;
+  // Add the context and version to the data.
+  data.context = playerjs.CONTEXT;
+  data.version = playerjs.VERSION;
 
   // We are expecting a response.
   if (callback) {
@@ -152,7 +154,7 @@ playerjs.Player.prototype.receive = function(e){
   }
 
   // abort if this message wasn't a player.js message
-  if (data.context !== playerjs.POST_MESSAGE_CONTEXT) {
+  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT) {
     return false;
   }
 
@@ -308,9 +310,13 @@ playerjs.addEvent(window, 'message', function(e){
     return false;
   }
 
+  // abort if this message wasn't a player.js message
+  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT) {
+    return false;
+  }
+
   // We need to determine if we are ready.
-  if (data.context === playerjs.POST_MESSAGE_CONTEXT && data.event === 'ready' &&
-      data.value && data.value.src){
+  if (data.event === 'ready' && data.value && data.value.src){
     playerjs.READIED.push(data.value.src);
   }
 });

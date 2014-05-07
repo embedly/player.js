@@ -65,7 +65,12 @@ playerjs.Receiver.prototype.receive = function(e){
   playerjs.log('Receiver.receive', e, data);
 
   // Nothing for us to do.
-  if (data.context !== playerjs.POST_MESSAGE_CONTEXT || !data.method){
+  if (!data.method){
+    return false;
+  }
+
+  // make sure the context is correct.
+  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT){
     return false;
   }
 
@@ -154,8 +159,10 @@ playerjs.Receiver.prototype.send = function(event, value, listener){
     playerjs.log('Receiver.send.reject', event, value, listener);
     return false;
   }
+
   var data = {
-    context: playerjs.POST_MESSAGE_CONTEXT,
+    context: playerjs.CONTEXT,
+    version: playerjs.VERSION,
     event: event
   };
 
