@@ -96,7 +96,7 @@ playerjs.Player.prototype.init = function(elem, options){
   }
 
   // See if we caught the src event first, otherwise assume we haven't loaded
-  if (playerjs.READIED.indexOf(elem.src) > -1){
+  if (playerjs.indexOf(playerjs.READIED, elem.src) > -1){
     self.loaded = true;
   } else {
     // Try the onload event, just lets us give another test.
@@ -243,7 +243,7 @@ playerjs.Player.prototype.off = function(event, callback){
 // supported by the player.
 playerjs.Player.prototype.supports = function(evtOrMethod, names){
 
-  playerjs.assert(['method', 'event'].indexOf(evtOrMethod) > -1,
+  playerjs.assert(playerjs.indexOf(['method', 'event'], evtOrMethod) > -1,
     'evtOrMethod needs to be either "event" or "method" got ' + evtOrMethod);
 
   // Make everything an array.
@@ -252,7 +252,7 @@ playerjs.Player.prototype.supports = function(evtOrMethod, names){
   var all = evtOrMethod === 'event' ? this.events : this.methods;
 
   for (var i=0; i < names.length; i++){
-    if (all.indexOf(names[i]) === -1){
+    if (playerjs.indexOf(all, names[i]) === -1){
       return false;
     }
   }

@@ -75,7 +75,7 @@ playerjs.Receiver.prototype.receive = function(e){
   }
 
   // Make sure we have a valid method.
-  if (playerjs.METHODS.all().indexOf(data.method) === -1){
+  if (playerjs.indexOf(playerjs.METHODS.all(), data.method) === -1){
     this.emit('error', {
       code: 2,
       msg: 'Invalid Method "'+data.method+'"'
@@ -90,7 +90,7 @@ playerjs.Receiver.prototype.receive = function(e){
   if (data.method === 'addEventListener') {
     if (this.eventListeners.hasOwnProperty(data.value)) {
       //If the listener is the same, i.e. null only add it once.
-      if (this.eventListeners[data.value].indexOf(listener) === -1){
+      if (playerjs.indexOf(this.eventListeners[data.value], listener) === -1){
         this.eventListeners[data.value].push(listener);
       }
     } else {
@@ -104,7 +104,7 @@ playerjs.Receiver.prototype.receive = function(e){
   // Remove the event listener.
   else if (data.method === 'removeEventListener') {
     if (this.eventListeners.hasOwnProperty(data.value)) {
-      var index = this.eventListeners[data.value].indexOf(listener);
+      var index = playerjs.indexOf(this.eventListeners[data.value], listener);
 
       // if we find the element, remove it.
       if (index > -1){

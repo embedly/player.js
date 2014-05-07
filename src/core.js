@@ -64,6 +64,19 @@ playerjs.has = function(obj, key){
   return Object.prototype.hasOwnProperty.call(obj, key);
 };
 
+// ie8 doesn't support indexOf in arrays, based on underscore.
+playerjs.indexOf = function(array, item) {
+  if (array == null){ return -1; }
+  var i = 0, length = array.length;
+  if (Array.prototype.IndexOf && array.indexOf === Array.prototype.IndexOf) {
+    return array.indexOf(item);
+  }
+  for (; i < length; i++) {
+    if (array[i] === item) { return i; }
+  }
+  return -1;
+};
+
 // Assert
 playerjs.assert = function(test, msg) {
   if (!test) {
