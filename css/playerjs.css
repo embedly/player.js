@@ -1,8 +1,8 @@
 body {
-  font-family: "Cantarell", sans-serif; }
+  font-family: 'Cantarell', sans-serif; }
 
 h1, h2, h3, h4 {
-  font-family: "Fjalla One", sans-serif;
+  font-family: 'Fjalla One', sans-serif;
   color: #333333; }
 
 a {
@@ -174,7 +174,7 @@ body.test .caution {
 body.test .error {
   background: #de2b0f; }
 body.test .row .test-case {
-  border: 1px solid #aaaaaa;
+  border: 1px solid #aaa;
   margin: 15px auto;
   padding: 10px; }
 body.test .test-mark i {
@@ -263,3 +263,6 @@ body.soundboard #boards {
       display: none; }
     body.soundboard #boards li.playing .fa-pause {
       display: block; }
+
+body.scroll .scroll-box {
+  margin: 4em 0; }
