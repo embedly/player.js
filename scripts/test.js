@@ -162,7 +162,7 @@
 
   /* TESTS */
   TestCase.prototype.ready = function(){
-    this.wait(2000, 'event', ['ready'], 'Failed to get ready');
+    this.wait(4500, 'event', ['ready'], 'Failed to get ready');
     this.player.on('ready', function(){
       this.success('event', 'ready');
       this.next();
