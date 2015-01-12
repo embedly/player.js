@@ -1,0 +1,24 @@
+{
+  "name": "player.js",
+  "version": "0.0.10",
+  "homepage": "http://playerjs.io",
+  "authors": [
+    "Embedly"
+  ],
+  "description": "Control embedded video and audio across multiple providers",
+  "main": "dist/player-0.0.10.js",
+  "moduleType": [
+    "globals"
+  ],
+  "license": "BSD",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "Gruntfile.js",
+    "lib",
+    "node_modules",
+    "package.json",
+    "src",
+    "test"
+  ]
+}
