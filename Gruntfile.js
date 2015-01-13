@@ -120,5 +120,6 @@ module.exports = function(grunt) {
   // Tasks
   grunt.registerTask("test", ["connect", "qunit"]);
   grunt.registerTask("default", ["concat:local", "connect:parent", "connect:child", "watch"]);
-  grunt.registerTask("release", ["jshint", "test", "concat:release", "uglify:release", "s3:release"]);
+  grunt.registerTask("package", ["jshint", "test", "concat:release", "uglify:release"]);
+  grunt.registerTask("release", ["package", "s3:release"]);
 };
