@@ -162,7 +162,7 @@
 
   /* TESTS */
   TestCase.prototype.ready = function(){
-    this.wait(4500, 'event', ['ready'], 'Failed to get ready');
+    this.wait(9500, 'event', ['ready'], 'Failed to get ready');
     this.player.on('ready', function(){
       this.success('event', 'ready');
       this.next();
@@ -170,7 +170,7 @@
   };
 
   TestCase.prototype.listeners = function(){
-    this.wait(3000, 'method', ['addEventListener', 'removeEventListener'], 'Failed to get ready');
+    this.wait(3000, 'method', ['addEventListener', 'removeEventListener'], 'Could not add/remove event listeners. This method requires timeupdate and play to work correctly.');
 
     var count = 0;
     this.player.on('timeupdate', function(){

@@ -3,52 +3,52 @@ body {
 
 h1, h2, h3, h4 {
   font-family: 'Fjalla One', sans-serif;
-  color: #333333; }
+  color: #333; }
 
 a {
-  color: #ff0051; }
+  color: #FF0051; }
   a:hover {
     color: #e60049; }
 
 .button {
-  background-color: #ff0051;
+  background-color: #FF0051;
   border-color: #e60049; }
   .button:focus, .button:hover {
     background-color: #990031; }
 
 .top-bar .name h1 {
-  color: white; }
+  color: #fff; }
 
 .contain-to-grid {
-  border-bottom: 2px solid #ff0051; }
+  border-bottom: 2px solid #FF0051; }
 
 .contain-to-grid, .top-bar, .top-bar-section ul {
-  color: white; }
+  color: #fff; }
 
 .top-bar-section li:not(.has-form) a:not(.button) {
-  color: white; }
+  color: #fff; }
 
 .header {
-  background: #333333;
+  background: #333;
   min-height: 400px;
   padding: 3em 0;
   margin-bottom: 3em;
-  border-bottom: 2px solid #ff0051; }
+  border-bottom: 2px solid #FF0051; }
   .header p {
-    color: white; }
+    color: #fff; }
   .header h1 {
     color: #fff;
     font-size: 5em; }
 
 .footer {
-  background: #ebe54d;
+  background: #EBE54D;
   margin: 4em 0 0 0; }
   .footer p {
     font-size: 12px;
     padding: 1em 0 0 0; }
 
 .breaker {
-  border-bottom: 2px solid #ebe54d;
+  border-bottom: 2px solid #EBE54D;
   margin: 7em 0 2em; }
   .breaker h2 {
     font-size: 4em;
@@ -77,7 +77,7 @@ a {
     padding: 0; }
   .controls .play {
     display: block;
-    color: #ebe54d;
+    color: #EBE54D;
     text-align: center; }
     .controls .play .fa-play {
       display: none; }
@@ -88,7 +88,7 @@ a {
     .controls .play.paused .fa-pause {
       display: none; }
   .controls a {
-    color: #ebe54d; }
+    color: #EBE54D; }
   .controls .progress {
     border: none;
     padding: 2px;
@@ -96,10 +96,10 @@ a {
     height: 15px;
     margin: 0; }
     .controls .progress .meter {
-      background: #ebe54d;
+      background: #EBE54D;
       width: 0%; }
   .controls .mute {
-    color: #ebe54d;
+    color: #EBE54D;
     float: left;
     margin-left: 5px;
     width: 15px; }
@@ -125,7 +125,7 @@ a {
       display: block;
       float: left; }
       .controls .volume span.active, .controls .volume span.set {
-        background: #ebe54d; }
+        background: #EBE54D; }
       .controls .volume span.inactive {
         background: #fff; }
   .controls .loop {
@@ -133,18 +133,18 @@ a {
     margin-left: 5px;
     float: left; }
     .controls .loop.looped {
-      color: #ebe54d; }
+      color: #EBE54D; }
   .controls .next, .controls .previous {
     margin-left: 5px; }
     .controls .next.disable, .controls .previous.disable {
-      color: white; }
+      color: #fff; }
 
 body.index .top-bar .name h1 {
   display: none; }
 body.index .contain-to-grid {
   border-bottom: none; }
 body.index.scrolling .contain-to-grid {
-  border-bottom: 2px solid #ff0051; }
+  border-bottom: 2px solid #FF0051; }
 body.index.scrolling .top-bar .name h1 {
   display: block; }
 body.index .demo {
@@ -217,7 +217,7 @@ body.progresses .progress {
     width: 0%;
     text-align: right;
     z-index: 1;
-    background: #ff0051; }
+    background: #FF0051; }
   body.progresses .progress .current-time {
     display: none;
     color: #fff;
@@ -236,7 +236,7 @@ body.progresses .progress {
     display: inline; }
 
 body.music .controls {
-  background: #333333; }
+  background: #333; }
 body.music .track .iframe {
   height: 0;
   width: 0;
@@ -266,3 +266,5 @@ body.soundboard #boards {
 
 body.scroll .scroll-box {
   margin: 4em 0; }
+
+/*# sourceMappingURL=playerjs.css.map */
