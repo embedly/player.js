@@ -185,7 +185,7 @@ Methods
   Determine if the media is paused::
 
     {
-      method: 'isPaused'
+      method: 'getPaused'
     }
 
 ``mute``: void
@@ -206,7 +206,7 @@ Methods
   Determine if the media is muted::
 
     {
-      method: 'isMuted'
+      method: 'getMuted'
     }
 
 ``setVolume``: void
@@ -235,7 +235,7 @@ Methods
   Perform a seek to a particular time in seconds::
 
     {
-      method: 'seekTo',
+      method: 'setCurrentTime',
       value: 12
     }
 
