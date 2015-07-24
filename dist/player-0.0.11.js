@@ -1,18 +1,13 @@
-/*! Player.js - v0.0.10 - 2015-01-12
+/*! Player.js - v0.0.11 - 2015-07-24
 * http://github.com/embedly/player.js
 * Copyright (c) 2015 Embedly; Licensed BSD */
 (function(window, document){
 var playerjs = {};
 
 playerjs.DEBUG = false;
-playerjs.VERSION = '0.0.10';
+playerjs.VERSION = '0.0.11';
 playerjs.CONTEXT = 'player.js';
 playerjs.POST_MESSAGE = !!window.postMessage;
-
-// Currently, CONTEXT will render a number of providers useless until they
-// upgrade their receivers. It's a bit of a chicken in the egg problem, so
-// the 0.0.10 release will include this flag.
-playerjs.ENABLE_CONTEXT = false;
 
 /*
 * Utils.
@@ -381,7 +376,7 @@ playerjs.Player.prototype.receive = function(e){
   }
 
   // abort if this message wasn't a player.js message
-  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT) {
+  if (data.context !== playerjs.CONTEXT) {
     return false;
   }
 
@@ -538,7 +533,7 @@ playerjs.addEvent(window, 'message', function(e){
   }
 
   // abort if this message wasn't a player.js message
-  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT) {
+  if (data.context !== playerjs.CONTEXT) {
     return false;
   }
 
@@ -619,7 +614,7 @@ playerjs.Receiver.prototype.receive = function(e){
   }
 
   // make sure the context is correct.
-  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT){
+  if (data.context !== playerjs.CONTEXT){
     return false;
   }
 

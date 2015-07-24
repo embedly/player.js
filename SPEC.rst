@@ -65,7 +65,7 @@ They have a common format::
   ``player.js``.
 
 ``version``
-  The version of the library that you are using. Currently this is ``0.0.10``.
+  The version of the library that you are using. Currently this is ``0.0.11``.
 
 ``method``
   The method name that we wish to invoke.
@@ -89,7 +89,7 @@ following message to the parent.
 
   {
     context: 'player.js',
-    version: '0.0.10',
+    version: '0.0.11',
     event: 'methodName',
     listener: 'listenerName',
     value: 'returnValue'

@@ -154,7 +154,7 @@ playerjs.Player.prototype.receive = function(e){
   }
 
   // abort if this message wasn't a player.js message
-  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT) {
+  if (data.context !== playerjs.CONTEXT) {
     return false;
   }
 
@@ -311,7 +311,7 @@ playerjs.addEvent(window, 'message', function(e){
   }
 
   // abort if this message wasn't a player.js message
-  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT) {
+  if (data.context !== playerjs.CONTEXT) {
     return false;
   }
 

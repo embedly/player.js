@@ -70,7 +70,7 @@ playerjs.Receiver.prototype.receive = function(e){
   }
 
   // make sure the context is correct.
-  if (playerjs.ENABLE_CONTEXT && data.context !== playerjs.CONTEXT){
+  if (data.context !== playerjs.CONTEXT){
     return false;
   }
 
