@@ -170,23 +170,25 @@
   };
 
   TestCase.prototype.listeners = function(){
-    this.wait(3000, 'method', ['addEventListener', 'removeEventListener'], 'Could not add/remove event listeners. This method requires timeupdate and play to work correctly.');
-
+    this.wait(5000, 'method', ['addEventListener', 'removeEventListener'], 'Could not add/remove event listeners. This method requires play and pause to work correctly.');
     var count = 0;
-    this.player.on('timeupdate', function(){
 
+    this.player.on('play', function(){
       if (count === 0){
-        this.player.off('timeupdate');
+        this.player.pause();
+        this.player.off('play');
 
         this.delay(function(){
           // we might get a timeout before everything is registered.
-          if (count < 2){
+          if (count === 1){
             this.success('method', 'addEventListener');
             this.success('method', 'removeEventListener');
             this.player.pause();
             this.next();
           }
         }, 750);
+
+        this.player.play();
       }
       count++;
     }, this);
@@ -196,7 +198,7 @@
   TestCase.prototype.play = function(){
     console.log('Testing play');
 
-    this.wait(2000, ['method', 'event'], ['play', 'pause'], 'Failed play');
+    this.wait(8000, ['method', 'event'], ['play', 'pause'], 'Failed play');
 
     this.player.on('play', function(){
       this.success('method', 'play');
@@ -213,7 +215,11 @@
         this.next();
       }, this);
 
-      this.player.pause();
+      // Make sure we are playing the video first.
+      this.player.on('timeupdate', function(){
+        this.player.off('timeupdate');
+        this.player.pause();
+      }, this);
     }, this);
 
     this.player.play();
@@ -228,7 +234,7 @@
       return false;
     }
 
-    this.wait(2000, 'event', ['timeupdate'], 'Failed timeupdate');
+    this.wait(9000, 'event', ['timeupdate'], 'Failed timeupdate');
 
     var done = false, updates = [];
     this.player.on('timeupdate', function(data){
@@ -295,7 +301,7 @@
     }
 
     // If nothing works, fail them.
-    this.wait(3000, 'event', ['ended'], 'Failed to fire ended event');
+    this.wait(9000, 'event', ['ended'], 'Failed to fire ended event');
 
     this.player.on('timeupdate', function(){
       this.player.off('timeupdate');
@@ -344,7 +350,7 @@
     }
 
     // If nothing works, fail them.
-    this.wait(3000, 'method', ['setCurrentTime', 'getCurrentTime'], 'Failed to get / set currentTime', true);
+    this.wait(9000, 'method', ['setCurrentTime', 'getCurrentTime'], 'Failed to get / set currentTime', true);
 
     this.player.on('timeupdate', function(data){
       // Seek back to 0
@@ -376,7 +382,7 @@
             this.next();
 
           }, this);
-        }, 200);
+        }, 1100);
 
       }, this);
     }, this);
