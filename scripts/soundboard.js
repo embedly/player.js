@@ -47,11 +47,6 @@
       url: 'http://www.youtube.com/watch?v=0mfSfekiZeE',
       start: 9,
       end: 10
-    },
-    {
-      url: 'http://www.youtube.com/watch?v=6DmH30Vmsso',
-      start: 3,
-      end: 8
     }
   ];
 
