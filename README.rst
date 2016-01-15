@@ -42,9 +42,9 @@ ready is called.
 
   var player = new playerjs.Player('iframe');
 
-  player.on(playerjs.Events.PLAY, function(
+  player.on(playerjs.Events.PLAY, function(){
     console.log('play');
-  ));
+  });
 
   player.on('ready', function(){
     player.setCurrentTime(20);
@@ -82,7 +82,7 @@ Wait for the document to be ready.
     $(document).on('ready', function(){
       $('iframes').each(function(){
         var player = new playerjs.Player(this);
-        player.on('ready', funciton(){
+        player.on('ready', function(){
           player.play();
         });
       });
