@@ -1,6 +1,6 @@
-/*! Player.js - v0.0.11 - 2015-07-24
+/*! Player.js - v0.0.12 - 2016-05-09
 * http://github.com/embedly/player.js
-* Copyright (c) 2015 Embedly; Licensed BSD */
+* Copyright (c) 2016 Embedly; Licensed BSD */
 (function(window, document){
 var playerjs = {};
 
@@ -519,8 +519,6 @@ for (var i = 0, l = playerjs.METHODS.all().length; i < l; i++) {
     playerjs.Player.prototype[methodName] = createPrototypeFunction(methodName);
   }
 }
-
-window.playerjs = playerjs;
 
 // We need to catch all ready events in case the iframe is ready before the
 // player is invoked.
@@ -1265,4 +1263,13 @@ playerjs.VideoJSAdapter.prototype.ready = function(){
   this.receiver.ready();
 };
 
+  if (typeof define === 'function' && define.amd) {
+    define(function () {
+      return playerjs
+    })
+  } else if (typeof module === 'object' && module.exports) {
+    module.exports = playerjs
+  } else {
+    window.playerjs = playerjs;
+  }
 })(window, document);

@@ -298,8 +298,6 @@ for (var i = 0, l = playerjs.METHODS.all().length; i < l; i++) {
   }
 }
 
-window.playerjs = playerjs;
-
 // We need to catch all ready events in case the iframe is ready before the
 // player is invoked.
 playerjs.addEvent(window, 'message', function(e){
