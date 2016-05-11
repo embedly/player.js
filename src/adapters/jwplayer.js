@@ -69,7 +69,7 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
   });
 
   receiver.on('getPaused', function(callback){
-    callback(player.getState() !== 'PLAYING');
+    callback(player.getState().toLowerCase() !== 'PLAYING'.toLowerCase());
   });
 
   receiver.on('getCurrentTime', function(callback){
