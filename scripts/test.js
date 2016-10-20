@@ -244,8 +244,14 @@
         done = true;
         this.success('event', 'timeupdate');
         this.player.off('timeupdate');
+
+        this.player.on('pause', function(){
+          this.player.off('pause')
+          this.next();
+        }, this);
+
         this.player.pause();
-        this.next();
+
       }
     }, this);
 
