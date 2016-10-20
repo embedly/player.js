@@ -1,13 +1,17 @@
 {
   "title": "Player.js",
   "name": "player.js",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "homepage": "http://github.com/embedly/player.js",
-  "main": "dist/player-0.0.11.js",
+  "main": "dist/player-0.0.12.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/embedly/player.js.git"
+  },
   "author": {
     "name": "Embedly"
   },
-  "licenses": [
+  "license": [
     {
       "type": "BSD",
       "url": "https://github.com/embedly/player.js/blob/master/LICENSE"
