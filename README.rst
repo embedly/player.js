@@ -29,7 +29,7 @@ Install
 Player.js is hosted on Embedly's CDN.
 ::
 
-  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.11.min.js"></script>
+  <script type="text/javascript" src="//cdn.embed.ly/player-0.0.12.min.js"></script>
 
 
 Ready
@@ -293,9 +293,8 @@ Adapters
 --------
 In order to make it super easy to add Player.js to any embed, we have written
 adapters for common video libraries. We currently have adapters for
-`Video.js <http://www.videojs.com/>`_,
-`SublimeVideo <http://sublimevideo.net/>`_ and
-`HTML5 Video <http://dev.w3.org/html5/spec-author-view/video.html>`_. An
+`Video.js <http://www.videojs.com/>`_, `JWPlayer <https://www.jwplayer.com/>`_
+and `HTML5 Video <http://dev.w3.org/html5/spec-author-view/video.html>`_. An
 Adapter wraps the Receiver and wires up all the events so your iframe is
 Player.js compatible.
 
@@ -327,23 +326,6 @@ An adapter for
 
     // Start accepting events
     adapter.ready();
-
-
-SublimeAdapter
-""""""""""""""
-An adapter for `SublimeVideo <http://sublimevideo.net/>`_. Currently the
-SublimeVideo player api does not allow developers to change volume, mute or get
-paused information.
-::
-
-    sublime.ready(function(){
-      var player = sublime.player('video');
-
-      var adapter = playerjs.SublimeAdapter(player);
-
-      // Start accepting events
-      adapter.ready();
-    });
 
 
 JWPlayerAdapter
