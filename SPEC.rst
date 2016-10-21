@@ -171,7 +171,7 @@ Methods
   Play the media::
 
     {
-      method: 'pause'
+      method: 'play'
     }
 
 ``pause``: void
@@ -255,7 +255,7 @@ Methods
       value: true
     }
 
-``getLoop``: number
+``getLoop``: boolean
   Return the loop attribute of the video::
 
     {
