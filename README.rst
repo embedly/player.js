@@ -189,7 +189,10 @@ Events that can be listened to.
 
 ``ready``
   fired when the media is ready to receive commands. This is fired regardless
-  of listening to the event.
+  of listening to the event. Note: As outlined in the PlayerJs Spec, you may run into
+  inconsistencies if you have multiple players on the page with the same ``src``. To get around
+  this, simply append a UUID or a timestamp to the iframe's src to guarantee that all players
+  on the page have a unique ``src``.
 
 
 ``progress``
@@ -218,7 +221,7 @@ Events that can be listened to.
   fires when the video is finished.
 
 ``seeked``
-  fires when the video is finished.
+  fires when the video has been seeked by the user.
 
 ``error``
   fires when an error occurs.
