@@ -9,7 +9,7 @@ playerjs.HTML5Adapter = function(video){
 
 playerjs.HTML5Adapter.prototype.init = function(video){
 
-  playerjs.assert(video, 'playerjs.VideoJSReceiver requires a video element');
+  playerjs.assert(video, 'playerjs.HTML5Adapter requires a video element');
 
   // Set up the actual receiver
   var receiver = this.receiver = new playerjs.Receiver();
