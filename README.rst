@@ -31,6 +31,10 @@ Player.js is hosted on Embedly's CDN.
 
   <script type="text/javascript" src="//cdn.embed.ly/player-0.0.12.min.js"></script>
 
+install via npm
+::
+
+npm install player.js
 
 Ready
 -----
