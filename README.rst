@@ -31,6 +31,10 @@ Player.js is hosted on Embedly's CDN.
 
   <script type="text/javascript" src="//cdn.embed.ly/player-0.0.12.min.js"></script>
 
+install via npm
+::
+
+  npm install player.js
 
 Ready
 -----
@@ -249,7 +253,39 @@ will allow you to easily listen to events and takes care of the house keeping.
   receiver.on('getDuration', function(callback){
     callback(video.duration);
   });
+  
+  receiver.on('getVolume', function(callback){
+    callback(video.volume*100);
+  });
 
+  receiver.on('setVolume', function(value){
+    video.volume = (value/100);
+  });
+  
+  receiver.on('mute', function(){
+    video.mute = true;
+  });
+
+  receiver.on('unmute', function(){
+    video.mute = false;
+  });
+
+  receiver.on('getMuted', function(callback){
+    callback(video.mute);
+  });
+
+  receiver.on('getLoop', function(callback){
+    callback(video.loop);
+  });
+
+  receiver.on('setLoop', function(value){
+    video.loop = value;
+  });
+
+  video.addEventListener('ended', function(){
+    receiver.emit('ended');
+  });
+  
   video.addEventListener('timeupdate', function(){
     receiver.emit('timeupdate', {
       seconds: video.currentTime,
