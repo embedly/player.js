@@ -1,6 +1,6 @@
-/*! Player.js - v0.0.12 - 2016-10-20
+/*! Player.js - v0.0.12 - 2017-05-25
 * http://github.com/embedly/player.js
-* Copyright (c) 2016 Embedly; Licensed BSD */
+* Copyright (c) 2017 Embedly; Licensed BSD */
 (function(window, document){
 var playerjs = {};
 
