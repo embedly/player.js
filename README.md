@@ -5,18 +5,16 @@ A JavaScript library for interacting with iframes that support Player.js
 spec.
 
 ```js
-var player = new playerjs.Player('iframe');
+const player = new playerjs.Player('iframe');
 
-player.on('ready', function(){
-  player.on('play', function(){
+player.on('ready', () => {
+  player.on('play', () => {
     console.log('play');
   });
 
-  player.getDuration(function(duration){
-    console.log(duration);
-  });
+  player.getDuration(duration => console.log(duration));
 
-  if (player.supports('method', 'mute')){
+  if (player.supports('method', 'mute')) {
     player.mute();
   }
 
@@ -48,15 +46,11 @@ player object. However, the player will internally queue messages until
 ready is called. :
 
 ```js
-var player = new playerjs.Player('iframe');
+const player = new playerjs.Player('iframe');
 
-player.on(playerjs.Events.PLAY, function(){
-  console.log('play');
-});
+player.on(playerjs.Events.PLAY, () => console.log('play'));
 
-player.on('ready', function(){
-  player.setCurrentTime(20);
-});
+player.on('ready', () => player.setCurrentTime(20));
 ```
 
 Timing
@@ -72,11 +66,11 @@ The best way is to do one of the following.
 ### Create the iframe via JavaScript
 
 ```js
-var iframe = document.createElement('iframe');
+const iframe = document.createElement('iframe');
 iframe.src = 'https://example.com/iframe';
 document.body.appendChild(iframe);
 
-var player = new playerjs.Player(iframe);
+const player = new playerjs.Player(iframe);
 ```
 
 In this case, Player.js will listen to the onload event of the iframe
@@ -88,12 +82,10 @@ and only try to communicate when ready.
 <iframe src="//example.com/iframe"></iframe>
 
 <script>
-  $(document).on('ready', function(){
-    $('iframes').each(function(){
-      var player = new playerjs.Player(this);
-      player.on('ready', function(){
-        player.play();
-      });
+  $(document).on('ready', () => {
+    $('iframes').each(() => {
+      const player = new playerjs.Player(this);
+      player.on('ready', () => player.play());
     });
   });
 </script>
@@ -147,9 +139,7 @@ player.unmute();
 Determine if the media is muted:
 
 ```js
-player.getMuted(function(value){
-  console.log('muted:', value);
-});
+player.getMuted(value => console.log('muted:', value));
 ```
 
 `setVolume`: void
@@ -163,18 +153,14 @@ player.setVolume(50);
 Get the volume. Value will be between 0-100:
 
 ```js
-player.getVolume(function(value){
-  console.log('getVolume:', value);
-});
+player.getVolume(value => console.log('getVolume:', value));
 ```
 
 `getDuration`: number
 Get the duration of the media is seconds:
 
 ```js
-player.getDuration(function(value){
-  console.log('getDuration:', value);
-});
+player.getDuration(value => console.log('getDuration:', value));
 ```
 
 `setCurrentTime`: number
@@ -188,9 +174,7 @@ player.setCurrentTime(50);
 Get the current time in seconds of the video:
 
 ```js
-player.getCurrentTime(function(value){
-  console.log('getCurrentTime:', value);
-});
+player.getCurrentTime(value => console.log('getCurrentTime:', value));
 ```
 
 `off`: void
@@ -207,9 +191,7 @@ player.off('play', playCallback);
 Add an event listener:
 
 ```js
-player.on('play', function(){
-  console.log('play');
-}, this);
+player.on('play', () => console.log('play'));
 ```
 
 `supports`: \['method', 'event'\], methodOrEventName
@@ -275,55 +257,37 @@ Receiver that will allow you to easily listen to events and takes care
 of the house keeping.
 
 ```js
-var receiver = new playerjs.Receiver();
+const receiver = new playerjs.Receiver();
 
-receiver.on('play', function(){
+receiver.on('play', () => {
   video.play();
   receiver.emit('play');
 });
 
-receiver.on('pause', function(){
+receiver.on('pause', () => {
   video.pause();
   receiver.emit('pause');
 });
 
-receiver.on('getDuration', function(callback){
-  callback(video.duration);
-});
+receiver.on('getDuration', callback => callback(video.duration));
 
-receiver.on('getVolume', function(callback){
-  callback(video.volume*100);
-});
+receiver.on('getVolume', callback => callback(video.volume*100));
 
-receiver.on('setVolume', function(value){
-  video.volume = (value/100);
-});
+receiver.on('setVolume', value => video.volume = (value/100));
 
-receiver.on('mute', function(){
-  video.mute = true;
-});
+receiver.on('mute', () => video.mute = true)
 
-receiver.on('unmute', function(){
-  video.mute = false;
-});
+receiver.on('unmute', () => video.mute = false);
 
-receiver.on('getMuted', function(callback){
-  callback(video.mute);
-});
+receiver.on('getMuted', callback => callback(video.mute));
 
-receiver.on('getLoop', function(callback){
-  callback(video.loop);
-});
+receiver.on('getLoop', callback => callback(video.loop));
 
-receiver.on('setLoop', function(value){
-  video.loop = value;
-});
+receiver.on('setLoop', value => video.loop = value);
 
-video.addEventListener('ended', function(){
-  receiver.emit('ended');
-});
+video.addEventListener('ended', () => receiver.emit('ended'));
 
-video.addEventListener('timeupdate', function(){
+video.addEventListener('timeupdate', () => {
   receiver.emit('timeupdate', {
     seconds: video.currentTime,
     duration: video.duration
@@ -342,17 +306,13 @@ implemented. If the event expects a return value a callback will be
 passed into the function call:
 
 ```js
-receiver.on('getDuration', function(callback){
-  callback(video.duration);
-});
+receiver.on('getDuration', callback => callback(video.duration));
 ```
 
 Otherwise you can safely ignore any inputs:
 
 ```js
-receiver.on('play', function(callback){
-  video.play();
-});
+receiver.on('play', callback => video.play());
 ```
 
 `emit`
@@ -360,7 +320,7 @@ Sends events to the parent as long as someone is listing. The above
 player events should be implemented. If a value is expected, it should
 be passed in as the second argument:
 
-    receiver.emit('timeupdate', {seconds:20, duration:40});
+    receiver.emit('timeupdate', { seconds:20, duration: 40 });
 
 `ready`
 Once everything is in place and you are ready to start responding to
@@ -386,8 +346,8 @@ Player.js compatible.
 An adapter for [Video.js](http://www.videojs.com/). :
 
 ```js
-videojs("video", {}, function(){
-  var adapter = new playerjs.VideoJSAdapter(this);
+videojs("video", {}, () => {
+  const adapter = new playerjs.VideoJSAdapter(this);
   // ... Do other things to initialize your video.
 
   // Start accepting events
@@ -400,10 +360,10 @@ An adapter for [HTML5
 Video](http://dev.w3.org/html5/spec-author-view/video.html). :
 
 ```js
-var video = document.getElementById('video');
+const video = document.getElementById('video');
 video.load();
 
-var adapter = playerjs.HTML5Adapter(video);
+const adapter = playerjs.HTML5Adapter(video);
 
 // Start accepting events
 adapter.ready();
@@ -419,9 +379,7 @@ jwplayer("video").setup({
   width: '100%'
 });
 
-var adapter = new playerjs.JWPlayerAdapter(jwplayer());
+const adapter = new playerjs.JWPlayerAdapter(jwplayer());
 
-jwplayer().onReady(function(){
-  adapter.ready();
-});
+jwplayer().onReady(() => adapter.ready());
 ```
