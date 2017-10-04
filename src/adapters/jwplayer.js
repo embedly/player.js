@@ -19,15 +19,15 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
   this.looped = false;
 
   /* EVENTS */
-  player.onPause(function(){
+  player.on('pause', function(){
     receiver.emit('pause');
   });
 
-  player.onPlay(function(){
+  player.on('play', function(){
     receiver.emit('play');
   });
 
-  player.onTime(function(e){
+  player.on('time', function(e){
     var seconds = e.position,
       duration = e.duration;
 
@@ -43,7 +43,7 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
   });
 
   var self = this;
-  player.onComplete(function(){
+  player.on('complete', function(){
     // Fake the looping
     if (self.looped === true){
       // By default jwplayer seeks after play.
@@ -54,7 +54,7 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
     }
   });
 
-  player.onError(function(){
+  player.on('error', function(){
     receiver.emit('error');
   });
 
