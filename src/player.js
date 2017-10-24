@@ -72,6 +72,12 @@ playerjs.Player.prototype.init = function(elem, options){
 
   this.elem = elem;
 
+  // make sure we have an iframe
+  playerjs.assert(elem.nodeName === 'IFRAME',
+    'playerjs.Player constructor requires an Iframe, got "'+elem.nodeName+'"');
+  playerjs.assert(elem.src,
+    'playerjs.Player constructor requires a Iframe with a \'src\' attribute.');
+
   // Figure out the origin of where we are sending messages.
   this.origin = playerjs.origin(elem.src);
 
