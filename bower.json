@@ -1,12 +1,12 @@
 {
   "name": "player.js",
-  "version": "0.0.12",
+  "version": "0.1.0",
   "homepage": "http://playerjs.io",
   "authors": [
     "Embedly"
   ],
   "description": "Control embedded video and audio across multiple providers",
-  "main": "dist/player-0.0.12.js",
+  "main": "dist/player-0.1.0.js",
   "moduleType": [
     "globals"
   ],

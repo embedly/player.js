@@ -1,4 +1,4 @@
-/*! Player.js - v0.0.12 - 2017-05-25
+/*! Player.js - v0.1.0 - 2017-10-24
 * http://github.com/embedly/player.js
 * Copyright (c) 2017 Embedly; Licensed BSD */
 (function(window, document){
@@ -293,6 +293,12 @@ playerjs.Player.prototype.init = function(elem, options){
   }
 
   this.elem = elem;
+
+  // make sure we have an iframe
+  playerjs.assert(elem.nodeName === 'IFRAME',
+    'playerjs.Player constructor requires an Iframe, got "'+elem.nodeName+'"');
+  playerjs.assert(elem.src,
+    'playerjs.Player constructor requires a Iframe with a \'src\' attribute.');
 
   // Figure out the origin of where we are sending messages.
   this.origin = playerjs.origin(elem.src);
@@ -761,7 +767,7 @@ playerjs.HTML5Adapter = function(video){
 
 playerjs.HTML5Adapter.prototype.init = function(video){
 
-  playerjs.assert(video, 'playerjs.VideoJSReceiver requires a video element');
+  playerjs.assert(video, 'playerjs.HTML5Adapter requires a video element');
 
   // Set up the actual receiver
   var receiver = this.receiver = new playerjs.Receiver();
@@ -850,6 +856,7 @@ playerjs.HTML5Adapter.prototype.init = function(video){
 playerjs.HTML5Adapter.prototype.ready = function(){
   this.receiver.ready();
 };
+
 //http://www.longtailvideo.com/support/jw-player/28851/javascript-api-reference
 playerjs.JWPlayerAdapter = function(player){
   if (!(this instanceof playerjs.JWPlayerAdapter)) {
@@ -869,15 +876,15 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
   this.looped = false;
 
   /* EVENTS */
-  player.onPause(function(){
+  player.on('pause', function(){
     receiver.emit('pause');
   });
 
-  player.onPlay(function(){
+  player.on('play', function(){
     receiver.emit('play');
   });
 
-  player.onTime(function(e){
+  player.on('time', function(e){
     var seconds = e.position,
       duration = e.duration;
 
@@ -893,7 +900,7 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
   });
 
   var self = this;
-  player.onComplete(function(){
+  player.on('complete', function(){
     // Fake the looping
     if (self.looped === true){
       // By default jwplayer seeks after play.
@@ -904,7 +911,7 @@ playerjs.JWPlayerAdapter.prototype.init = function(player){
     }
   });
 
-  player.onError(function(){
+  player.on('error', function(){
     receiver.emit('error');
   });
 
