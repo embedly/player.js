@@ -243,9 +243,6 @@ fires when the video is paused.
 `ended`
 fires when the video is finished.
 
-`seeked`
-fires when the video has been seeked by the user.
-
 `error`
 fires when an error occurs.
 
