@@ -383,3 +383,20 @@ const adapter = new playerjs.JWPlayerAdapter(jwplayer());
 
 jwplayer().onReady(() => adapter.ready());
 ```
+
+### BetaJSAdapter
+An adapter for [BetaJS Video Player](http://betajs.com) and [Ziggeo](https://ziggeo.com).
+
+```html
+    <ba-videoplayer ba-video="demo.mp4" id="video-player">
+    </ba-videoplayer>
+```
+
+```js
+const video = document.getElementById('video-player').dynamicshandler;
+
+const adapter = playerjs.BetaJSAdapter(video);
+
+// Start accepting events
+adapter.ready();
+```
