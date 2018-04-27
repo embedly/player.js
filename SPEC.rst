@@ -146,7 +146,7 @@ It's helpful to have a quick example of the JavaScript before moving forward.
     console.log('played');
   };
 
-  window.addEventListener('message', function(){
+  window.addEventListener('message', function(e){
     if (e.origin === origin){
       var data = JSON.parse(e.data);
       if (data.context === 'player.js' && data.event === play){
