@@ -70,7 +70,7 @@ They have a common format::
 ``method``
   The method name that we wish to invoke.
 
-``value``
+``value`` (optional)
   If the method sets an attribute, the value attribute should be set.
 
 ``listener`` (optional)
