@@ -149,7 +149,7 @@ It's helpful to have a quick example of the JavaScript before moving forward.
   window.addEventListener('message', function(){
     if (e.origin === origin){
       var data = JSON.parse(e.data);
-      if (data.context === 'player.js' && data.event === play){
+      if (data.context === 'player.js' && data.event === 'play'){
         played();
       }
     }
