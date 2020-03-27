@@ -62,7 +62,6 @@ playerjs.METHODS.all = function(){
 playerjs.READIED = [];
 
 playerjs.Player.prototype.init = function(elem, options){
-  playerjs.log('bbb');
 
   var self = this;
 
