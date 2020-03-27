@@ -4,7 +4,6 @@
 * postMessage that use an Open Player Spec
 *
 */
-
 playerjs.Player = function(elem, options){
   if (!(this instanceof playerjs.Player)) {
     return new playerjs.Player(elem, options);
@@ -63,6 +62,7 @@ playerjs.METHODS.all = function(){
 playerjs.READIED = [];
 
 playerjs.Player.prototype.init = function(elem, options){
+  playerjs.log('bbb');
 
   var self = this;
 

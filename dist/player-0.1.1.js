@@ -1,6 +1,6 @@
-/*! Player.js - v0.1.0 - 2017-10-24
+/*! Player.js - v0.1.1 - 2020-03-27
 * http://github.com/embedly/player.js
-* Copyright (c) 2017 Embedly; Licensed BSD */
+* Copyright (c) 2020 Embedly; Licensed BSD */
 (function(window, document){
 var playerjs = {};
 
@@ -82,10 +82,30 @@ playerjs.assert = function(test, msg) {
     throw msg || "Player.js Assert Failed";
   }
 };
+
+//Based on: https://gist.github.com/mwleinad/be055a595c370c152aec1f32f90130ac GNU GENERAL PUBLIC LICENSE
+playerjs.generateNewUUid = function(withDashes, stringIndex, result) {
+  //stringIndex is not 9, 14, 19 or 24
+  function generateRandomNumber(stringIndex) {
+    var randomNumber = (stringIndex ^ 15 ? 8 ^ Math.random() * (stringIndex ^ 20 ? 16 : 4) : 4);
+    return randomNumber.toString(16);
+  }
+
+  //Placeholder is 9, 14, 19 or 24
+  function addDash(withDashes) {
+    return withDashes ? '-' : '';
+  }
+
+  for(result = stringIndex=''; stringIndex++ < 36; result += stringIndex * 51 & 52 ?
+    generateRandomNumber(stringIndex) :
+    addDash(withDashes)
+  ) { }
+  return result;
+};
+
 /*
 * Keeper is just a method for keeping track of all the callbacks.
 */
-
 playerjs.Keeper = function(){
   this.init();
 };
@@ -95,11 +115,7 @@ playerjs.Keeper.prototype.init = function(){
 };
 
 playerjs.Keeper.prototype.getUUID = function(){
-  // Create a random id. #http://stackoverflow.com/a/2117523/564191
-  return 'listener-xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
-      return v.toString(16);
-  });
+  return 'listener-' + playerjs.generateNewUUid(false);
 };
 
 playerjs.Keeper.prototype.has = function(event, id){
@@ -226,7 +242,6 @@ playerjs.Keeper.prototype.off = function(event, cb){
 * postMessage that use an Open Player Spec
 *
 */
-
 playerjs.Player = function(elem, options){
   if (!(this instanceof playerjs.Player)) {
     return new playerjs.Player(elem, options);
@@ -285,6 +300,7 @@ playerjs.METHODS.all = function(){
 playerjs.READIED = [];
 
 playerjs.Player.prototype.init = function(elem, options){
+  playerjs.log('bbb');
 
   var self = this;
 

@@ -12,11 +12,7 @@ playerjs.Keeper.prototype.init = function(){
 };
 
 playerjs.Keeper.prototype.getUUID = function(){
-  // Create a random id. #http://stackoverflow.com/a/2117523/564191
-  return 'listener-xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
-      return v.toString(16);
-  });
+  return 'listener-' + playerjs.generateNewUUid(false);
 };
 
 playerjs.Keeper.prototype.has = function(event, id){

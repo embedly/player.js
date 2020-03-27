@@ -1,9 +1,9 @@
 {
   "title": "Player.js",
   "name": "player.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "http://github.com/embedly/player.js",
-  "main": "dist/player-0.1.0.js",
+  "main": "dist/player-0.1.1.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/embedly/player.js.git"
