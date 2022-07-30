@@ -137,7 +137,7 @@ playerjs.Player.prototype.send = function(data, callback, ctx){
 
   playerjs.log('Player.send', data, this.origin);
 
-  if (this.loaded === true){
+  if (this.loaded === true && this.elem.contentWindow){
     this.elem.contentWindow.postMessage(JSON.stringify(data), this.origin);
   }
 
