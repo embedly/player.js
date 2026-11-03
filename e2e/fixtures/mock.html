@@ -1,36 +1,38 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>player.js mock receiver</title>
-</head>
-<body>
-  <script>
-    // Record raw messages received from the parent.
-    window.__received = [];
-    window.addEventListener('message', function (e) {
-      window.__received.push({ origin: e.origin, data: e.data });
-    });
-  </script>
-  <script src="/player.js"></script>
-  <script>
-    var adapter = window.adapter = playerjs.MockAdapter();
+  <head>
+    <meta charset="utf-8" />
+    <title>player.js mock receiver</title>
+  </head>
+  <body>
+    <script>
+      // Record raw messages received from the parent.
+      window.__received = [];
+      window.addEventListener('message', function (e) {
+        window.__received.push({ origin: e.origin, data: e.data });
+      });
+    </script>
+    <script src="/player.js"></script>
+    <script>
+      var adapter = (window.adapter = playerjs.MockAdapter());
 
-    var params = new URLSearchParams(location.search);
+      var params = new URLSearchParams(location.search);
 
-    // ?replaceState=1 rewrites the page URL before ready, like players that
-    // tidy their own query string.
-    if (params.get('replaceState')) {
-      history.replaceState(null, '', location.pathname + '?rewritten=1');
-    }
+      // ?replaceState=1 rewrites the page URL before ready, like players that
+      // tidy their own query string.
+      if (params.get('replaceState')) {
+        history.replaceState(null, '', location.pathname + '?rewritten=1');
+      }
 
-    // ?delay=ms postpones ready so the parent's pre-ready queue can be tested.
-    var delay = Number(params.get('delay') || 0);
-    if (delay) {
-      setTimeout(function () { adapter.ready(); }, delay);
-    } else {
-      adapter.ready();
-    }
-  </script>
-</body>
+      // ?delay=ms postpones ready so the parent's pre-ready queue can be tested.
+      var delay = Number(params.get('delay') || 0);
+      if (delay) {
+        setTimeout(function () {
+          adapter.ready();
+        }, delay);
+      } else {
+        adapter.ready();
+      }
+    </script>
+  </body>
 </html>

@@ -32,7 +32,9 @@ test.describe('message format', () => {
 
   test('child -> parent messages are JSON strings', async ({ page }) => {
     await page.evaluate(() => get('getDuration'));
-    const raw = await page.evaluate(() => __messages.filter((m) => m.origin === 'http://127.0.0.1:8003'));
+    const raw = await page.evaluate(() =>
+      __messages.filter((m) => m.origin === 'http://127.0.0.1:8003'),
+    );
     expect(raw.length).toBeGreaterThan(0);
     for (const m of raw) expect(typeof m.data).toBe('string');
   });
@@ -67,12 +69,25 @@ test.describe('message format', () => {
       __received.map((m) => JSON.parse(m.data as string)).filter((d) => d.method === 'getDuration'),
     );
     expect(sent).toEqual([
-      { method: 'getDuration', context: 'player.js', version: VERSION, listener: expect.stringMatching(LISTENER_ID) },
+      {
+        method: 'getDuration',
+        context: 'player.js',
+        version: VERSION,
+        listener: expect.stringMatching(LISTENER_ID),
+      },
     ]);
 
-    const reply = await page.evaluate(() => childMessages().filter((m) => m.event === 'getDuration'));
+    const reply = await page.evaluate(() =>
+      childMessages().filter((m) => m.event === 'getDuration'),
+    );
     expect(reply).toEqual([
-      { context: 'player.js', version: VERSION, event: 'getDuration', value: 20, listener: sent[0].listener },
+      {
+        context: 'player.js',
+        version: VERSION,
+        event: 'getDuration',
+        value: 20,
+        listener: sent[0].listener,
+      },
     ]);
   });
 
@@ -83,7 +98,9 @@ test.describe('message format', () => {
       await get('getVolume'); // round-trip so both have arrived
     });
     const sent = await childFrame(page, 'mock').evaluate(() =>
-      __received.map((m) => JSON.parse(m.data as string)).filter((d) => d.method === 'setVolume' || d.method === 'mute'),
+      __received
+        .map((m) => JSON.parse(m.data as string))
+        .filter((d) => d.method === 'setVolume' || d.method === 'mute'),
     );
     expect(sent).toEqual([
       { method: 'setVolume', value: 42, context: 'player.js', version: VERSION },
@@ -98,14 +115,24 @@ test.describe('message format', () => {
       await p;
     });
     const add = await childFrame(page, 'mock').evaluate(() =>
-      __received.map((m) => JSON.parse(m.data as string)).filter((d) => d.method === 'addEventListener' && d.value === 'play'),
+      __received
+        .map((m) => JSON.parse(m.data as string))
+        .filter((d) => d.method === 'addEventListener' && d.value === 'play'),
     );
     expect(add).toEqual([
-      { method: 'addEventListener', value: 'play', listener: expect.stringMatching(LISTENER_ID), context: 'player.js', version: VERSION },
+      {
+        method: 'addEventListener',
+        value: 'play',
+        listener: expect.stringMatching(LISTENER_ID),
+        context: 'player.js',
+        version: VERSION,
+      },
     ]);
 
     const evt = await page.evaluate(() => childMessages().filter((m) => m.event === 'play'));
-    expect(evt).toEqual([{ context: 'player.js', version: VERSION, event: 'play', listener: add[0].listener }]);
+    expect(evt).toEqual([
+      { context: 'player.js', version: VERSION, event: 'play', listener: add[0].listener },
+    ]);
   });
 
   test('VERSION matches package.json', async ({ page }) => {
@@ -129,11 +156,16 @@ test.describe('Player-side message filtering', () => {
 
   // Characterization: an event without a listener id is delivered to every
   // listener for that event. Any script on the iframe origin can do this.
-  test('delivers listener-less events from the iframe origin to all listeners', async ({ page }) => {
+  test('delivers listener-less events from the iframe origin to all listeners', async ({
+    page,
+  }) => {
     const p = page.evaluate(() => nextEvent('play', 2000));
     await page.waitForTimeout(100); // let addEventListener reach the child
     await childFrame(page, 'mock').evaluate(() =>
-      window.parent.postMessage(JSON.stringify({ context: 'player.js', event: 'play', value: 'forged' }), '*'),
+      window.parent.postMessage(
+        JSON.stringify({ context: 'player.js', event: 'play', value: 'forged' }),
+        '*',
+      ),
     );
     expect(await p).toBe('forged');
   });
@@ -166,7 +198,10 @@ test.describe('Receiver-side message filtering', () => {
   test('ignores messages with the wrong context', async ({ page }) => {
     await page.evaluate(() => {
       const f = document.querySelector('iframe')!;
-      f.contentWindow!.postMessage(JSON.stringify({ context: 'other.js', method: 'play' }), 'http://127.0.0.1:8003');
+      f.contentWindow!.postMessage(
+        JSON.stringify({ context: 'other.js', method: 'play' }),
+        'http://127.0.0.1:8003',
+      );
     });
     await page.waitForTimeout(200);
     expect(await page.evaluate(() => get('getPaused'))).toBe(true);
@@ -177,7 +212,10 @@ test.describe('Receiver-side message filtering', () => {
   test('accepts object (non-string) messages', async ({ page }) => {
     await page.evaluate(() => {
       const f = document.querySelector('iframe')!;
-      f.contentWindow!.postMessage({ context: 'player.js', method: 'play' }, 'http://127.0.0.1:8003');
+      f.contentWindow!.postMessage(
+        { context: 'player.js', method: 'play' },
+        'http://127.0.0.1:8003',
+      );
     });
     await page.waitForTimeout(200);
     expect(await page.evaluate(() => get('getPaused'))).toBe(false);
@@ -220,7 +258,13 @@ test.describe('partial receivers', () => {
       readyPlay: player.supports('event', ['ready', 'play']),
       ended: player.supports('event', 'ended'),
     }));
-    expect(s).toEqual({ play: true, getDuration: false, both: false, readyPlay: true, ended: false });
+    expect(s).toEqual({
+      play: true,
+      getDuration: false,
+      both: false,
+      readyPlay: true,
+      ended: false,
+    });
   });
 
   test('emits error code 3 for an unimplemented method and never answers', async ({ page }) => {
@@ -230,7 +274,10 @@ test.describe('partial receivers', () => {
       const value = get('getDuration', 800);
       return { error: await e, value: await value };
     });
-    expect(result).toEqual({ error: { code: 3, msg: 'Method Not Supported"getDuration"' }, value: 'timeout' });
+    expect(result).toEqual({
+      error: { code: 3, msg: 'Method Not Supported"getDuration"' },
+      value: 'timeout',
+    });
   });
 
   test('implemented methods still work', async ({ page }) => {
@@ -304,7 +351,13 @@ test.describe('ready handshake', () => {
       const queued = p.queue.length;
       const isReadyBefore = p.isReady;
       await whenReady(p);
-      return { queued, isReadyBefore, volume: await volume, time: await time, queueAfter: p.queue.length };
+      return {
+        queued,
+        isReadyBefore,
+        volume: await volume,
+        time: await time,
+        queueAfter: p.queue.length,
+      };
     });
     expect(result).toEqual({ queued: 4, isReadyBefore: false, volume: 42, time: 3, queueAfter: 0 });
   });
@@ -338,7 +391,9 @@ test.describe('referrer-less iframes', () => {
   // works.
   test('ready arrives but commands are never answered', async ({ page }) => {
     await openParent(page);
-    await page.evaluate(() => (window as any).createPlayer('/e2e/fixtures/mock.html', { referrerPolicy: 'no-referrer' }));
+    await page.evaluate(() =>
+      (window as any).createPlayer('/e2e/fixtures/mock.html', { referrerPolicy: 'no-referrer' }),
+    );
     expect(await childFrame(page, 'mock').evaluate(() => adapter.receiver.origin)).toBe('');
     expect(await page.evaluate(() => get('getDuration', 800))).toBe('timeout');
   });
@@ -370,7 +425,12 @@ test.describe('iframe URL differs from its src', () => {
         p.on('ready', () => readyFired++);
         await timeout(800);
         const duration = await get('getDuration', 800);
-        return { readyFired, isReady: p.isReady, queued: p.queue.map((q: any) => q.method), duration };
+        return {
+          readyFired,
+          isReady: p.isReady,
+          queued: p.queue.map((q: any) => q.method),
+          duration,
+        };
       },
       { path, afterLoad },
     );
@@ -381,7 +441,9 @@ test.describe('iframe URL differs from its src', () => {
 
   for (const c of CASES) {
     for (const afterLoad of [false, true]) {
-      test(`${c.name}, Player created ${afterLoad ? 'after' : 'before'} load: ready fires once and commands work`, async ({ page }) => {
+      test(`${c.name}, Player created ${afterLoad ? 'after' : 'before'} load: ready fires once and commands work`, async ({
+        page,
+      }) => {
         expect(await observe(page, c.path, afterLoad)).toEqual({
           readyFired: 1,
           isReady: true,

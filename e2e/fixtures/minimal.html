@@ -1,23 +1,23 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>player.js minimal receiver</title>
-</head>
-<body>
-  <script src="/player.js"></script>
-  <script>
-    // A receiver that only advertises and implements a subset of the spec.
-    var receiver = window.receiver = new playerjs.Receiver(
-      ['ready', 'play'],
-      ['play', 'addEventListener', 'removeEventListener']
-    );
-    window.plays = 0;
-    receiver.on('play', function () {
-      window.plays++;
-      receiver.emit('play');
-    });
-    receiver.ready();
-  </script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <title>player.js minimal receiver</title>
+  </head>
+  <body>
+    <script src="/player.js"></script>
+    <script>
+      // A receiver that only advertises and implements a subset of the spec.
+      var receiver = (window.receiver = new playerjs.Receiver(
+        ['ready', 'play'],
+        ['play', 'addEventListener', 'removeEventListener'],
+      ));
+      window.plays = 0;
+      receiver.on('play', function () {
+        window.plays++;
+        receiver.emit('play');
+      });
+      receiver.ready();
+    </script>
+  </body>
 </html>

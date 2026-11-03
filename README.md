@@ -12,7 +12,7 @@ player.on('ready', () => {
     console.log('play');
   });
 
-  player.getDuration(duration => console.log(duration));
+  player.getDuration((duration) => console.log(duration));
 
   if (player.supports('method', 'mute')) {
     player.mute();
@@ -116,7 +116,7 @@ player.pause();
 Determine if the media is paused:
 
 ```js
-player.getPaused(function(value){
+player.getPaused(function (value) {
   console.log('paused:', value);
 });
 ```
@@ -139,7 +139,7 @@ player.unmute();
 Determine if the media is muted:
 
 ```js
-player.getMuted(value => console.log('muted:', value));
+player.getMuted((value) => console.log('muted:', value));
 ```
 
 `setVolume`: void
@@ -153,14 +153,14 @@ player.setVolume(50);
 Get the volume. Value will be between 0-100:
 
 ```js
-player.getVolume(value => console.log('getVolume:', value));
+player.getVolume((value) => console.log('getVolume:', value));
 ```
 
 `getDuration`: number
 Get the duration of the media is seconds:
 
 ```js
-player.getDuration(value => console.log('getDuration:', value));
+player.getDuration((value) => console.log('getDuration:', value));
 ```
 
 `setCurrentTime`: number
@@ -174,7 +174,7 @@ player.setCurrentTime(50);
 Get the current time in seconds of the video:
 
 ```js
-player.getCurrentTime(value => console.log('getCurrentTime:', value));
+player.getCurrentTime((value) => console.log('getCurrentTime:', value));
 ```
 
 `off`: void
@@ -284,28 +284,28 @@ receiver.on('pause', () => {
   receiver.emit('pause');
 });
 
-receiver.on('getDuration', callback => callback(video.duration));
+receiver.on('getDuration', (callback) => callback(video.duration));
 
-receiver.on('getVolume', callback => callback(video.volume*100));
+receiver.on('getVolume', (callback) => callback(video.volume * 100));
 
-receiver.on('setVolume', value => video.volume = (value/100));
+receiver.on('setVolume', (value) => (video.volume = value / 100));
 
-receiver.on('mute', () => video.mute = true)
+receiver.on('mute', () => (video.mute = true));
 
-receiver.on('unmute', () => video.mute = false);
+receiver.on('unmute', () => (video.mute = false));
 
-receiver.on('getMuted', callback => callback(video.mute));
+receiver.on('getMuted', (callback) => callback(video.mute));
 
-receiver.on('getLoop', callback => callback(video.loop));
+receiver.on('getLoop', (callback) => callback(video.loop));
 
-receiver.on('setLoop', value => video.loop = value);
+receiver.on('setLoop', (value) => (video.loop = value));
 
 video.addEventListener('ended', () => receiver.emit('ended'));
 
 video.addEventListener('timeupdate', () => {
   receiver.emit('timeupdate', {
     seconds: video.currentTime,
-    duration: video.duration
+    duration: video.duration,
   });
 });
 
@@ -321,13 +321,13 @@ implemented. If the event expects a return value a callback will be
 passed into the function call:
 
 ```js
-receiver.on('getDuration', callback => callback(video.duration));
+receiver.on('getDuration', (callback) => callback(video.duration));
 ```
 
 Otherwise you can safely ignore any inputs:
 
 ```js
-receiver.on('play', callback => video.play());
+receiver.on('play', (callback) => video.play());
 ```
 
 `emit`
@@ -345,6 +345,7 @@ emitting `ready`:
 ```js
 receiver.ready();
 ```
+
 Adapters
 --------
 
@@ -361,7 +362,7 @@ Player.js compatible.
 An adapter for [Video.js](http://www.videojs.com/). :
 
 ```js
-videojs("video", {}, () => {
+videojs('video', {}, () => {
   const adapter = new playerjs.VideoJSAdapter(this);
   // ... Do other things to initialize your video.
 
@@ -369,6 +370,7 @@ videojs("video", {}, () => {
   adapter.ready();
 });
 ```
+
 ### HTML5Adapter
 
 An adapter for [HTML5
@@ -385,13 +387,14 @@ adapter.ready();
 ```
 
 ### JWPlayerAdapter
+
 An adapter for [JWPlayer](http://www.jwplayer.com).
 
 ```js
-jwplayer("video").setup({
-  file: "/lib/videos/demo.mp4",
+jwplayer('video').setup({
+  file: '/lib/videos/demo.mp4',
   height: '100%',
-  width: '100%'
+  width: '100%',
 });
 
 const adapter = new playerjs.JWPlayerAdapter(jwplayer());
