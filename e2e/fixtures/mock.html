@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>player.js mock receiver</title>
+</head>
+<body>
+  <script>
+    // Record raw messages received from the parent.
+    window.__received = [];
+    window.addEventListener('message', function (e) {
+      window.__received.push({ origin: e.origin, data: e.data });
+    });
+  </script>
+  <script src="/player.js"></script>
+  <script>
+    var adapter = window.adapter = playerjs.MockAdapter();
+
+    // ?delay=ms postpones ready so the parent's pre-ready queue can be tested.
+    var delay = Number(new URLSearchParams(location.search).get('delay') || 0);
+    if (delay) {
+      setTimeout(function () { adapter.ready(); }, delay);
+    } else {
+      adapter.ready();
+    }
+  </script>
+</body>
+</html>

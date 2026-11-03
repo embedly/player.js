@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>player.js parent</title>
+</head>
+<body>
+  <script>
+    // Record every raw message the parent window receives, before player.js
+    // installs its own listeners.
+    window.__messages = [];
+    window.addEventListener('message', function (e) {
+      window.__messages.push({ origin: e.origin, data: e.data });
+    });
+  </script>
+  <script src="/player.js"></script>
+  <script>
+    window.CHILD = 'http://127.0.0.1:8003';
+
+    var frameCount = 0;
+
+    // Append an iframe pointing at a fixture on the child origin.
+    window.addFrame = function (path, attrs) {
+      var f = document.createElement('iframe');
+      f.id = 'frame' + frameCount++;
+      f.width = 320;
+      f.height = 180;
+      f.allow = 'autoplay';
+      if (attrs) {
+        for (var k in attrs) f[k] = attrs[k];
+      }
+      f.src = window.CHILD + path;
+      document.body.appendChild(f);
+      return f;
+    };
+
+    window.timeout = function (ms, value) {
+      return new Promise(function (resolve) {
+        setTimeout(function () { resolve(value); }, ms);
+      });
+    };
+
+    // Resolve once the player fires 'ready', reject after ms.
+    window.whenReady = function (player, ms) {
+      return new Promise(function (resolve, reject) {
+        var t = setTimeout(function () { reject(new Error('ready timeout')); }, ms || 5000);
+        player.on('ready', function () {
+          clearTimeout(t);
+          resolve();
+        });
+      });
+    };
+
+    // Create an iframe + Player and wait for ready. The player is exposed as
+    // window.player so tests can drive it from page.evaluate.
+    window.createPlayer = function (path, attrs) {
+      var f = window.addFrame(path, attrs);
+      window.player = new playerjs.Player(f);
+      return window.whenReady(window.player);
+    };
+
+    // Promise wrapper around the callback-style getters. Resolves to
+    // 'timeout' if the receiver never answers.
+    window.get = function (name, ms) {
+      return Promise.race([
+        new Promise(function (resolve) { window.player[name](resolve); }),
+        window.timeout(ms || 2000, 'timeout')
+      ]);
+    };
+
+    // Resolve with the first payload of an event (and stop listening), or
+    // 'timeout'.
+    window.nextEvent = function (event, ms) {
+      return new Promise(function (resolve) {
+        var done = false;
+        var cb = function (data) {
+          if (done) return;
+          done = true;
+          window.player.off(event, cb);
+          resolve(data === undefined ? null : data);
+        };
+        window.player.on(event, cb);
+        setTimeout(function () {
+          if (done) return;
+          done = true;
+          window.player.off(event, cb);
+          resolve('timeout');
+        }, ms || 3000);
+      });
+    };
+
+    // Parsed player.js messages received from the child origin.
+    window.childMessages = function () {
+      return window.__messages
+        .filter(function (m) { return m.origin === window.CHILD; })
+        .map(function (m) { try { return JSON.parse(m.data); } catch (e) { return m.data; } });
+    };
+  </script>
+</body>
+</html>

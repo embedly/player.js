@@ -17,14 +17,19 @@
       "url": "https://github.com/embedly/player.js/blob/master/LICENSE"
     }
   ],
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui"
+  },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "grunt": "~0.4.0",
-    "grunt-contrib-connect": "~0.5.0",
-    "grunt-contrib-uglify": "~0.2.7",
-    "grunt-contrib-jshint": "~0.7.2",
     "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-contrib-jshint": "~0.7.2",
     "grunt-contrib-qunit": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-watch": "~0.5.3",
     "grunt-s3": "~0.2.0-alpha.3"
   }
 }
