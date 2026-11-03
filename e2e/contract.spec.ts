@@ -140,8 +140,8 @@ test.describe('HTML5Adapter specifics', () => {
     expect(result.time.seconds).toBeGreaterThanOrEqual(0);
   });
 
-  // Regression: the adapter used to emit 'buffered' (not in the spec) with
-  // the number of buffered ranges as "percent" (#79).
+  // Regression: the adapter used to emit only 'buffered' (not in the spec),
+  // so player.on('progress') never fired (#79).
   test('fires progress with how far the media has buffered', async ({ page }) => {
     // preload="none" (?early=1) so buffering starts only once we play, after
     // the listener is in place, and a throttled download (?throttle=1) so the
@@ -161,6 +161,21 @@ test.describe('HTML5Adapter specifics', () => {
     expect(progress.seconds).toBeLessThanOrEqual(progress.duration);
     expect(progress.percent).toBeCloseTo(progress.seconds / progress.duration, 5);
     expect(progress.percent).toBeLessThanOrEqual(1);
+  });
+
+  // Compatibility: the legacy, non-spec 'buffered' event is still emitted
+  // with its original payload, where "percent" is the number of buffered
+  // time ranges. Existing embedders listen for it.
+  test('still fires the legacy buffered event', async ({ page }) => {
+    await openPlayer(page, 'html5.html?early=1&throttle=1');
+    const buffered = await page.evaluate(async () => {
+      const p = nextEvent('buffered', 4000);
+      player.play();
+      return p;
+    });
+    expect(buffered).toEqual({ percent: expect.any(Number) });
+    expect(Number.isInteger(buffered.percent)).toBe(true);
+    expect(buffered.percent).toBeGreaterThanOrEqual(0);
   });
 });
 

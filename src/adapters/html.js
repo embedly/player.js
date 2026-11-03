@@ -36,6 +36,13 @@ playerjs.HTML5Adapter.prototype.init = function(video){
 
   video.addEventListener('progress', function(){
     var buffered = video.buffered;
+
+    // Legacy, non-spec event kept for existing listeners. Its "percent" is
+    // the number of buffered time ranges, not a fraction; use 'progress'.
+    receiver.emit('buffered', {
+      percent: buffered.length
+    });
+
     if (!buffered || buffered.length === 0) {
       return;
     }
