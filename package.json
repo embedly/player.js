@@ -16,7 +16,7 @@
     "!dist/player-0.1.0.js",
     "!dist/player-0.1.0.min.js"
   ],
-  "type": "commonjs",
+  "type": "module",
   "sideEffects": true,
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
@@ -45,7 +45,7 @@
     "test:unit": "vp test",
     "test:e2e": "playwright test",
     "test:ui": "playwright test --ui",
-    "release:cdn": "npm run build && node scripts/release-cdn.mts",
+    "release:cdn": "npm run build && node scripts/release-cdn.ts",
     "prepublishOnly": "npm run check && npm run build"
   },
   "devDependencies": {

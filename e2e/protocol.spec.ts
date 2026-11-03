@@ -4,6 +4,7 @@
 // Existing iframes in the wild speak this protocol, so a rewrite must keep
 // these passing (or change them deliberately).
 
+import { readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 import { CHILD, childFrame, openParent, openPlayer } from './helpers';
 
@@ -20,7 +21,9 @@ declare const __messages: { origin: string; data: unknown }[];
 declare const __received: { origin: string; data: unknown }[];
 
 // Version sent on the wire; must track package.json.
-const VERSION: string = require('../package.json').version;
+const VERSION: string = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
+).version;
 
 const LISTENER_ID = /^listener-[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/;
 const MOCK_URL = `${CHILD}/e2e/fixtures/mock.html`;

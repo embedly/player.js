@@ -29,7 +29,7 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'node e2e/server.mts',
+    command: 'node e2e/server.ts',
     url: 'http://localhost:8004/e2e/fixtures/parent.html',
     reuseExistingServer: !process.env.CI,
   },
