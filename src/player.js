@@ -247,18 +247,16 @@ playerjs.Player.prototype.off = function(event, callback){
   var listeners = this.keeper.off(event, callback);
   playerjs.log('Player.off', listeners);
 
-  if (listeners.length > 0) {
-    for (var i in listeners){
-      this.send({
-        method: 'removeEventListener',
-        value: event,
-        listener: listeners[i]
-      });
-      return true;
-    }
+  // Tell the receiver to drop every listener we removed, not just the first.
+  for (var i = 0; i < listeners.length; i++){
+    this.send({
+      method: 'removeEventListener',
+      value: event,
+      listener: listeners[i]
+    });
   }
 
-  return false;
+  return listeners.length > 0;
 };
 
 // Based on what ready passed back, we can determine if the events/method are

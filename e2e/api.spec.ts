@@ -212,10 +212,9 @@ test.describe('event listeners', () => {
     expect(await childFrame(page, 'mock').evaluate(() => adapter.receiver.eventListeners.pause)).toBeUndefined();
   });
 
-  // BUG: Player.off() returns inside its loop, so only the first listener id
-  // is sent to the receiver as removeEventListener. The rest stay registered
-  // in the iframe and keep sending events nobody handles. src/player.js
-  test.fail('off(event) unregisters every listener in the receiver', async ({ page }) => {
+  // Regression: off() used to return inside its loop, so only the first
+  // listener was removed in the iframe and the rest kept sending events.
+  test('off(event) unregisters every listener in the receiver', async ({ page }) => {
     await page.evaluate(async () => {
       player.on('pause', () => {});
       player.on('pause', () => {});
