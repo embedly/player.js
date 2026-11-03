@@ -1,35 +1,67 @@
 {
-  "title": "Player.js",
   "name": "player.js",
   "version": "0.1.0",
-  "homepage": "http://github.com/embedly/player.js",
-  "main": "dist/player-0.1.0.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/embedly/player.js.git"
-  },
+  "description": "Control embedded video and audio across multiple providers",
+  "homepage": "https://github.com/embedly/player.js",
+  "license": "BSD-3-Clause",
   "author": {
     "name": "Embedly"
   },
-  "license": [
-    {
-      "type": "BSD",
-      "url": "https://github.com/embedly/player.js/blob/master/LICENSE"
-    }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/embedly/player.js.git"
+  },
+  "files": [
+    "dist",
+    "!dist/player-0.1.0.js",
+    "!dist/player-0.1.0.min.js"
   ],
+  "type": "module",
+  "sideEffects": true,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "unpkg": "./dist/player.min.js",
+  "jsdelivr": "./dist/player.min.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
-    "test": "playwright test",
-    "test:ui": "playwright test --ui"
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "check": "vp check",
+    "fix": "vp check --fix",
+    "test": "npm run build && vp test && playwright test",
+    "test:unit": "vp test",
+    "test:e2e": "playwright test",
+    "test:ui": "playwright test --ui",
+    "release:cdn": "npm run build && node scripts/release-cdn.ts",
+    "prepublishOnly": "npm run check && npm run build"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1161.0",
     "@playwright/test": "^1.64.1",
-    "grunt": "~0.4.0",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-connect": "~0.5.0",
-    "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-qunit": "~0.3.0",
-    "grunt-contrib-uglify": "~0.2.7",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-s3": "~0.2.0-alpha.3"
-  }
+    "@types/node": "^24.19.2",
+    "publint": "^0.3.25",
+    "typescript": "^7.0.2",
+    "vite-plus": "^1.4.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22.18",
+      "onFail": "warn"
+    }
+  },
+  "title": "Player.js"
 }

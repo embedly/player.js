@@ -15,7 +15,8 @@ declare function timeout<T>(ms: number, value?: T): Promise<T>;
 declare const __received: { origin: string; data: unknown }[];
 
 // Run fn in the page and return what it threw (player.js throws strings).
-const thrown = (fn: string) => `(() => { try { (${fn})(); return null; } catch (e) { return { type: typeof e, value: String(e) }; } })()`;
+const thrown = (fn: string) =>
+  `(() => { try { (${fn})(); return null; } catch (e) { return { type: typeof e, value: String(e) }; } })()`;
 
 test.describe('globals', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,13 +34,42 @@ test.describe('globals', () => {
     }));
     expect(g.keys).toEqual(
       [
-        'DEBUG', 'VERSION', 'CONTEXT', 'POST_MESSAGE', 'origin', 'addEvent', 'log', 'isString', 'isObject',
-        'isArray', 'isNone', 'has', 'indexOf', 'assert', 'Keeper', 'Player', 'EVENTS', 'METHODS', 'READIED',
-        'Receiver', 'HTML5Adapter', 'JWPlayerAdapter', 'MockAdapter', 'VideoJSAdapter',
+        'DEBUG',
+        'VERSION',
+        'CONTEXT',
+        'POST_MESSAGE',
+        'origin',
+        'addEvent',
+        'log',
+        'isString',
+        'isObject',
+        'isArray',
+        'isNone',
+        'has',
+        'indexOf',
+        'assert',
+        'Keeper',
+        'Player',
+        'EVENTS',
+        'METHODS',
+        'READIED',
+        'Receiver',
+        'HTML5Adapter',
+        'JWPlayerAdapter',
+        'MockAdapter',
+        'VideoJSAdapter',
       ].sort(),
     );
     expect(g.context).toBe('player.js');
-    expect(g.events).toEqual(['ready', 'play', 'pause', 'ended', 'timeupdate', 'progress', 'error']);
+    expect(g.events).toEqual([
+      'ready',
+      'play',
+      'pause',
+      'ended',
+      'timeupdate',
+      'progress',
+      'error',
+    ]);
     expect(g.methods).toHaveLength(15);
     expect(g.PLAY).toBe('play');
     expect(g.GETDURATION).toBe('getDuration');
@@ -79,14 +109,22 @@ test.describe('constructor', () => {
 
   test('throws for a non-iframe element', async ({ page }) => {
     const e = await page.evaluate(thrown(`() => new playerjs.Player(document.body)`));
-    expect(e).toEqual({ type: 'string', value: 'playerjs.Player constructor requires an Iframe, got "BODY"' });
+    expect(e).toEqual({
+      type: 'string',
+      value: 'playerjs.Player constructor requires an Iframe, got "BODY"',
+    });
   });
 
   test('throws for an iframe without src', async ({ page }) => {
     const e = await page.evaluate(
-      thrown(`() => { const f = document.createElement('iframe'); document.body.appendChild(f); new playerjs.Player(f); }`),
+      thrown(
+        `() => { const f = document.createElement('iframe'); document.body.appendChild(f); new playerjs.Player(f); }`,
+      ),
     );
-    expect(e).toEqual({ type: 'string', value: "playerjs.Player constructor requires a Iframe with a 'src' attribute." });
+    expect(e).toEqual({
+      type: 'string',
+      value: "playerjs.Player constructor requires a Iframe with a 'src' attribute.",
+    });
   });
 });
 
@@ -127,8 +165,16 @@ test.describe('method argument validation', () => {
   test('getter callbacks run with the player as this, or a given context', async ({ page }) => {
     const r = await page.evaluate(async () => {
       const ctx = { name: 'ctx' };
-      const a = await new Promise((res) => player.getDuration(function (this: any) { res(this === player); }));
-      const b = await new Promise((res) => player.getDuration(function (this: any) { res(this === ctx); }, ctx));
+      const a = await new Promise((res) =>
+        player.getDuration(function (this: any) {
+          res(this === player);
+        }),
+      );
+      const b = await new Promise((res) =>
+        player.getDuration(function (this: any) {
+          res(this === ctx);
+        }, ctx),
+      );
       return { a, b };
     });
     expect(r).toEqual({ a: true, b: true });
@@ -148,7 +194,7 @@ test.describe('event listeners', () => {
       player.on('play', () => calls.push(2));
       player.play();
       await timeout(300);
-      return calls.sort();
+      return calls.sort((a, b) => a - b);
     });
     expect(calls).toEqual([0, 1, 2]);
   });
@@ -157,8 +203,16 @@ test.describe('event listeners', () => {
     const r = await page.evaluate(async () => {
       const ctx = {};
       const out: Record<string, boolean> = {};
-      player.on('play', function (this: any) { out.default = this === player; });
-      player.on('play', function (this: any) { out.ctx = this === ctx; }, ctx);
+      player.on('play', function (this: any) {
+        out.default = this === player;
+      });
+      player.on(
+        'play',
+        function (this: any) {
+          out.ctx = this === ctx;
+        },
+        ctx,
+      );
       player.play();
       await timeout(300);
       return out;
@@ -210,7 +264,9 @@ test.describe('event listeners', () => {
       player.off('pause', a);
       await timeout(100);
     });
-    expect(await childFrame(page, 'mock').evaluate(() => adapter.receiver.eventListeners.pause)).toBeUndefined();
+    expect(
+      await childFrame(page, 'mock').evaluate(() => adapter.receiver.eventListeners.pause),
+    ).toBeUndefined();
   });
 
   // Regression: off() used to return inside its loop, so only the first
@@ -224,7 +280,9 @@ test.describe('event listeners', () => {
       player.off('pause');
       await timeout(100);
     });
-    expect(await childFrame(page, 'mock').evaluate(() => adapter.receiver.eventListeners.pause)).toBeUndefined();
+    expect(
+      await childFrame(page, 'mock').evaluate(() => adapter.receiver.eventListeners.pause),
+    ).toBeUndefined();
   });
 
   test('getter callbacks fire once', async ({ page }) => {
@@ -270,12 +328,20 @@ test.describe('remounting an embed with the same src', () => {
   });
 
   for (const destroyFirst of [false, true]) {
-    test(`${destroyFirst ? 'after destroy()' : 'without destroy()'}: no errors and the old player stays asleep`, async ({ page }) => {
+    test(`${destroyFirst ? 'after destroy()' : 'without destroy()'}: no errors and the old player stays asleep`, async ({
+      page,
+    }) => {
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message));
       const r = await remount(page, destroyFirst);
       expect(errors).toEqual([]);
-      expect(r).toEqual({ oldReady: 0, oldPlay: 0, newPlay: 1, oldIsReady: false, newDuration: 20 });
+      expect(r).toEqual({
+        oldReady: 0,
+        oldPlay: 0,
+        newPlay: 1,
+        oldIsReady: false,
+        newDuration: 20,
+      });
     });
   }
 });
@@ -284,7 +350,10 @@ test.describe('destroy()', () => {
   // Methods that reached the mock receiver, per its raw message log.
   const sentToReceiver = (page: any, methods: string[]) =>
     childFrame(page, 'mock').evaluate(
-      (methods: string[]) => __received.map((m) => JSON.parse(m.data as string).method).filter((m) => methods.includes(m)),
+      (methods: string[]) =>
+        __received
+          .map((m) => JSON.parse(m.data as string).method)
+          .filter((m) => methods.includes(m)),
       methods,
     );
 

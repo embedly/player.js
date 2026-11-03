@@ -12,7 +12,7 @@ player.on('ready', () => {
     console.log('play');
   });
 
-  player.getDuration(duration => console.log(duration));
+  player.getDuration((duration) => console.log(duration));
 
   if (player.supports('method', 'mute')) {
     player.mute();
@@ -25,17 +25,29 @@ player.on('ready', () => {
 Install
 -------
 
-Player.js is hosted on Embedly's CDN. :
+Player.js is hosted on Embedly's CDN. It sets a `playerjs` global:
 
 ```html
 <script type="text/javascript" src="//cdn.embed.ly/player-0.1.0.min.js"></script>
 ```
 
-install via npm :
+Or install it from npm:
 
 ```sh
 npm install player.js
 ```
+
+```js
+// ES modules: the playerjs namespace, or individual exports
+import playerjs from 'player.js';
+import { Player, Receiver } from 'player.js';
+
+// CommonJS
+const playerjs = require('player.js');
+```
+
+TypeScript types are included. Player.js can be imported during server-side
+rendering; create players in the browser only.
 
 Ready
 -----
@@ -116,7 +128,7 @@ player.pause();
 Determine if the media is paused:
 
 ```js
-player.getPaused(function(value){
+player.getPaused(function (value) {
   console.log('paused:', value);
 });
 ```
@@ -139,7 +151,7 @@ player.unmute();
 Determine if the media is muted:
 
 ```js
-player.getMuted(value => console.log('muted:', value));
+player.getMuted((value) => console.log('muted:', value));
 ```
 
 `setVolume`: void
@@ -153,14 +165,14 @@ player.setVolume(50);
 Get the volume. Value will be between 0-100:
 
 ```js
-player.getVolume(value => console.log('getVolume:', value));
+player.getVolume((value) => console.log('getVolume:', value));
 ```
 
 `getDuration`: number
 Get the duration of the media is seconds:
 
 ```js
-player.getDuration(value => console.log('getDuration:', value));
+player.getDuration((value) => console.log('getDuration:', value));
 ```
 
 `setCurrentTime`: number
@@ -174,7 +186,7 @@ player.setCurrentTime(50);
 Get the current time in seconds of the video:
 
 ```js
-player.getCurrentTime(value => console.log('getCurrentTime:', value));
+player.getCurrentTime((value) => console.log('getCurrentTime:', value));
 ```
 
 `off`: void
@@ -284,28 +296,28 @@ receiver.on('pause', () => {
   receiver.emit('pause');
 });
 
-receiver.on('getDuration', callback => callback(video.duration));
+receiver.on('getDuration', (callback) => callback(video.duration));
 
-receiver.on('getVolume', callback => callback(video.volume*100));
+receiver.on('getVolume', (callback) => callback(video.volume * 100));
 
-receiver.on('setVolume', value => video.volume = (value/100));
+receiver.on('setVolume', (value) => (video.volume = value / 100));
 
-receiver.on('mute', () => video.mute = true)
+receiver.on('mute', () => (video.mute = true));
 
-receiver.on('unmute', () => video.mute = false);
+receiver.on('unmute', () => (video.mute = false));
 
-receiver.on('getMuted', callback => callback(video.mute));
+receiver.on('getMuted', (callback) => callback(video.mute));
 
-receiver.on('getLoop', callback => callback(video.loop));
+receiver.on('getLoop', (callback) => callback(video.loop));
 
-receiver.on('setLoop', value => video.loop = value);
+receiver.on('setLoop', (value) => (video.loop = value));
 
 video.addEventListener('ended', () => receiver.emit('ended'));
 
 video.addEventListener('timeupdate', () => {
   receiver.emit('timeupdate', {
     seconds: video.currentTime,
-    duration: video.duration
+    duration: video.duration,
   });
 });
 
@@ -321,13 +333,13 @@ implemented. If the event expects a return value a callback will be
 passed into the function call:
 
 ```js
-receiver.on('getDuration', callback => callback(video.duration));
+receiver.on('getDuration', (callback) => callback(video.duration));
 ```
 
 Otherwise you can safely ignore any inputs:
 
 ```js
-receiver.on('play', callback => video.play());
+receiver.on('play', (callback) => video.play());
 ```
 
 `emit`
@@ -345,6 +357,7 @@ emitting `ready`:
 ```js
 receiver.ready();
 ```
+
 Adapters
 --------
 
@@ -361,7 +374,7 @@ Player.js compatible.
 An adapter for [Video.js](http://www.videojs.com/). :
 
 ```js
-videojs("video", {}, () => {
+videojs('video', {}, () => {
   const adapter = new playerjs.VideoJSAdapter(this);
   // ... Do other things to initialize your video.
 
@@ -369,6 +382,7 @@ videojs("video", {}, () => {
   adapter.ready();
 });
 ```
+
 ### HTML5Adapter
 
 An adapter for [HTML5
@@ -385,16 +399,41 @@ adapter.ready();
 ```
 
 ### JWPlayerAdapter
+
 An adapter for [JWPlayer](http://www.jwplayer.com).
 
 ```js
-jwplayer("video").setup({
-  file: "/lib/videos/demo.mp4",
+jwplayer('video').setup({
+  file: '/lib/videos/demo.mp4',
   height: '100%',
-  width: '100%'
+  width: '100%',
 });
 
 const adapter = new playerjs.JWPlayerAdapter(jwplayer());
 
 jwplayer().onReady(() => adapter.ready());
 ```
+
+Development
+-----------
+
+Player.js is written in TypeScript and uses [Vite+](https://viteplus.dev)
+for building, formatting, linting, and unit tests, and Playwright for browser
+tests. You need Node.js 22.18 or later.
+
+```sh
+npm install
+npm run build        # dist/: ESM, CommonJS and UMD (player.js, player.min.js)
+npm run dev          # rebuild on change
+npm run check        # format, lint and type checks (npm run fix to auto-fix)
+npm test             # build, then unit tests and browser tests
+npm run test:ui      # browser tests in Playwright's UI
+```
+
+The browser tests run in Google Chrome, which needs to be installed. To test
+the minified bundle, set `PLAYERJS_BUNDLE=dist/player.min.js`.
+
+To publish the browser bundles to the CDN as `player-<version>.js` and
+`player-<version>.min.js`, bump the version in `package.json`, then run
+`npm run release:cdn -- --dry-run` to check and `npm run release:cdn` to
+upload (needs AWS credentials).

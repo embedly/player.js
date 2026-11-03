@@ -102,12 +102,35 @@ for (const r of RECEIVERS) {
     });
 
     test('ready advertises every event and method', async ({ page }) => {
-      const supported = await page.evaluate(() => ({ events: player.events, methods: player.methods }));
-      expect(supported.events).toEqual(['ready', 'play', 'pause', 'ended', 'timeupdate', 'progress', 'error']);
+      const supported = await page.evaluate(() => ({
+        events: player.events,
+        methods: player.methods,
+      }));
+      expect(supported.events).toEqual([
+        'ready',
+        'play',
+        'pause',
+        'ended',
+        'timeupdate',
+        'progress',
+        'error',
+      ]);
       expect(supported.methods).toEqual([
-        'play', 'pause', 'getPaused', 'mute', 'unmute', 'getMuted', 'setVolume', 'getVolume',
-        'getDuration', 'setCurrentTime', 'getCurrentTime', 'setLoop', 'getLoop',
-        'removeEventListener', 'addEventListener',
+        'play',
+        'pause',
+        'getPaused',
+        'mute',
+        'unmute',
+        'getMuted',
+        'setVolume',
+        'getVolume',
+        'getDuration',
+        'setCurrentTime',
+        'getCurrentTime',
+        'setLoop',
+        'getLoop',
+        'removeEventListener',
+        'addEventListener',
       ]);
     });
   });

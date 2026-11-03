@@ -14,34 +14,52 @@ permissions:
   contents: read
 
 jobs:
-  # Future jobs (lint, build) go alongside this one; each shows up as its own
-  # "CI / <name>" check for branch protection.
-  test:
-    name: test
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  # Each job shows up as its own "CI / <name>" check for branch protection.
 
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
+      - run: npm ci
+      # Format, lint, and type checks (Vite+: Oxfmt, Oxlint, tsgolint).
+      - run: npm run check
 
-      # --ignore-scripts: the legacy Grunt toolchain pulls in phantomjs, whose
-      # install script downloads a binary that no longer exists. Nothing the
-      # tests use needs install scripts.
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      # Builds dist/ (ESM, CJS, UMD) and validates package.json with publint.
+      - run: npm run build
+
+      # Package exports and UMD bundles, in Node (Vitest).
+      - run: npm run test:unit
 
       # The suite uses the real Chrome channel (H.264 playback), which is
       # preinstalled on GitHub's Ubuntu runners.
       - name: Chrome version
         run: google-chrome --version
 
-      - name: Run tests
-        run: npm test
+      - name: Browser tests (dist/player.js)
+        run: npm run test:e2e
+
+      - name: Browser tests (dist/player.min.js)
+        run: npm run test:e2e
+        env:
+          PLAYERJS_BUNDLE: dist/player.min.js
 
       - name: Upload report
         if: failure()
