@@ -1,7 +1,7 @@
 var playerjs = {};
 
 playerjs.DEBUG = false;
-playerjs.VERSION = '0.0.11';
+playerjs.VERSION = '0.1.0'; // must match package.json (checked by e2e/protocol.spec.ts)
 playerjs.CONTEXT = 'player.js';
 playerjs.POST_MESSAGE = !!window.postMessage;
 
