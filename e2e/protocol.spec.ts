@@ -327,10 +327,11 @@ test.describe('referrer-less iframes', () => {
   });
 });
 
-// The Player only accepts 'ready' when ready.value.src (the receiver's
-// location) equals iframe.src exactly (src/player.js). Any difference breaks
-// the handshake. Likely cause of #67 (ready never fires) and #82 / #100
-// (ready fires but commands never run).
+// The ready handshake identifies the iframe by the window that sent the
+// message, not by comparing its URL to iframe.src. Before this, an iframe that
+// redirected or rewrote its own URL never became ready: ready callbacks fired
+// but commands stayed queued if the Player was created before load (#82,
+// #100), and ready never fired if it was created after (#67).
 test.describe('iframe URL differs from its src', () => {
   const CASES = [
     { name: 'src redirects', path: '/redirect?to=/e2e/fixtures/mock.html' },
@@ -362,31 +363,14 @@ test.describe('iframe URL differs from its src', () => {
   });
 
   for (const c of CASES) {
-    test(`${c.name}, Player created before load: ready fires but commands stay queued`, async ({ page }) => {
-      expect(await observe(page, c.path, false)).toEqual({
-        readyFired: 1,
-        isReady: false,
-        queued: ['getDuration'],
-        duration: 'timeout',
-      });
-    });
-
-    test(`${c.name}, Player created after load: ready never fires`, async ({ page }) => {
-      expect(await observe(page, c.path, true)).toEqual({
-        readyFired: 0,
-        isReady: false,
-        queued: ['getDuration'],
-        duration: 'timeout',
-      });
-    });
-
-    // BUG: the handshake should not depend on the iframe URL staying equal to
-    // its src attribute.
     for (const afterLoad of [false, true]) {
-      test.fail(`${c.name}, Player created ${afterLoad ? 'after' : 'before'} load: commands work`, async ({ page }) => {
-        const r = await observe(page, c.path, afterLoad);
-        expect(r.isReady).toBe(true);
-        expect(r.duration).toBe(20);
+      test(`${c.name}, Player created ${afterLoad ? 'after' : 'before'} load: ready fires once and commands work`, async ({ page }) => {
+        expect(await observe(page, c.path, afterLoad)).toEqual({
+          readyFired: 1,
+          isReady: true,
+          queued: [],
+          duration: 20,
+        });
       });
     }
   }
