@@ -49,6 +49,18 @@ async function handle(req, res) {
   const url = new URL(req.url, 'http://x');
 
   try {
+    // /redirect?to=/path issues a 302, like embed URLs that bounce to the
+    // real player page.
+    if (url.pathname === '/redirect') {
+      const to = url.searchParams.get('to') ?? '/';
+      if (!to.startsWith('/')) {
+        res.writeHead(400).end('relative paths only');
+        return;
+      }
+      res.writeHead(302, { location: to, 'cache-control': 'no-store' }).end();
+      return;
+    }
+
     if (url.pathname === '/player.js') {
       res.writeHead(200, { 'content-type': TYPES['.js'], 'cache-control': 'no-store' });
       res.end(await bundle());

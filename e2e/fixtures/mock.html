@@ -16,8 +16,16 @@
   <script>
     var adapter = window.adapter = playerjs.MockAdapter();
 
+    var params = new URLSearchParams(location.search);
+
+    // ?replaceState=1 rewrites the page URL before ready, like players that
+    // tidy their own query string.
+    if (params.get('replaceState')) {
+      history.replaceState(null, '', location.pathname + '?rewritten=1');
+    }
+
     // ?delay=ms postpones ready so the parent's pre-ready queue can be tested.
-    var delay = Number(new URLSearchParams(location.search).get('delay') || 0);
+    var delay = Number(params.get('delay') || 0);
     if (delay) {
       setTimeout(function () { adapter.ready(); }, delay);
     } else {

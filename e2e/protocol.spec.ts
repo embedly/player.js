@@ -326,3 +326,68 @@ test.describe('referrer-less iframes', () => {
     expect(await page.evaluate(() => get('getDuration', 800))).toBe('timeout');
   });
 });
+
+// The Player only accepts 'ready' when ready.value.src (the receiver's
+// location) equals iframe.src exactly (src/player.js). Any difference breaks
+// the handshake. Likely cause of #67 (ready never fires) and #82 / #100
+// (ready fires but commands never run).
+test.describe('iframe URL differs from its src', () => {
+  const CASES = [
+    { name: 'src redirects', path: '/redirect?to=/e2e/fixtures/mock.html' },
+    { name: 'receiver rewrites its URL', path: '/e2e/fixtures/mock.html?replaceState=1' },
+  ];
+
+  // Create a Player before or after the iframe loads, then report what the
+  // embedder would observe.
+  const observe = (page: any, path: string, afterLoad: boolean) =>
+    page.evaluate(
+      async ({ path, afterLoad }: { path: string; afterLoad: boolean }) => {
+        const f = addFrame(path);
+        if (afterLoad) {
+          await new Promise((r) => f.addEventListener('load', r, { once: true }));
+          await timeout(300);
+        }
+        const p = ((window as any).player = new playerjs.Player(f));
+        let readyFired = 0;
+        p.on('ready', () => readyFired++);
+        await timeout(800);
+        const duration = await get('getDuration', 800);
+        return { readyFired, isReady: p.isReady, queued: p.queue.map((q: any) => q.method), duration };
+      },
+      { path, afterLoad },
+    );
+
+  test.beforeEach(async ({ page }) => {
+    await openParent(page);
+  });
+
+  for (const c of CASES) {
+    test(`${c.name}, Player created before load: ready fires but commands stay queued`, async ({ page }) => {
+      expect(await observe(page, c.path, false)).toEqual({
+        readyFired: 1,
+        isReady: false,
+        queued: ['getDuration'],
+        duration: 'timeout',
+      });
+    });
+
+    test(`${c.name}, Player created after load: ready never fires`, async ({ page }) => {
+      expect(await observe(page, c.path, true)).toEqual({
+        readyFired: 0,
+        isReady: false,
+        queued: ['getDuration'],
+        duration: 'timeout',
+      });
+    });
+
+    // BUG: the handshake should not depend on the iframe URL staying equal to
+    // its src attribute.
+    for (const afterLoad of [false, true]) {
+      test.fail(`${c.name}, Player created ${afterLoad ? 'after' : 'before'} load: commands work`, async ({ page }) => {
+        const r = await observe(page, c.path, afterLoad);
+        expect(r.isReady).toBe(true);
+        expect(r.duration).toBe(20);
+      });
+    }
+  }
+});
