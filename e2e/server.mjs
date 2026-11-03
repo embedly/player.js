@@ -45,6 +45,27 @@ async function bundle() {
   return parts.join('\n');
 }
 
+// Write a response body, optionally in small timed chunks (?throttle=1) so
+// the browser sees a slow download, e.g. to observe media 'progress' events.
+function sendBody(res, buf, throttle) {
+  if (!throttle) {
+    res.end(buf);
+    return;
+  }
+  const CHUNK = 32 * 1024;
+  let offset = 0;
+  const timer = setInterval(() => {
+    if (res.destroyed || offset >= buf.length) {
+      clearInterval(timer);
+      res.end();
+      return;
+    }
+    res.write(buf.subarray(offset, offset + CHUNK));
+    offset += CHUNK;
+  }, 100);
+  res.on('close', () => clearInterval(timer));
+}
+
 async function handle(req, res) {
   const url = new URL(req.url, 'http://x');
 
@@ -74,6 +95,7 @@ async function handle(req, res) {
     }
 
     const body = await readFile(path);
+    const throttle = url.searchParams.has('throttle');
     const type = TYPES[extname(path)] ?? 'application/octet-stream';
 
     // Video elements need byte-range support to seek.
@@ -87,12 +109,12 @@ async function handle(req, res) {
         'accept-ranges': 'bytes',
         'content-length': end - start + 1,
       });
-      res.end(body.subarray(start, end + 1));
+      sendBody(res, body.subarray(start, end + 1), throttle);
       return;
     }
 
     res.writeHead(200, { 'content-type': type, 'accept-ranges': 'bytes', 'cache-control': 'no-store' });
-    res.end(body);
+    sendBody(res, body, throttle);
   } catch {
     res.writeHead(404).end('not found');
   }

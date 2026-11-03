@@ -35,8 +35,29 @@ playerjs.HTML5Adapter.prototype.init = function(video){
   });
 
   video.addEventListener('progress', function(){
+    var buffered = video.buffered;
+
+    // Legacy, non-spec event kept for existing listeners. Its "percent" is
+    // the number of buffered time ranges, not a fraction; use 'progress'.
     receiver.emit('buffered', {
-      percent: video.buffered.length
+      percent: buffered.length
+    });
+
+    if (!buffered || buffered.length === 0) {
+      return;
+    }
+
+    // How far the media has buffered: the end of the last buffered range.
+    // seconds/duration follow SPEC.rst; percent (0-1) is what the README
+    // documents.
+    var seconds = buffered.end(buffered.length - 1);
+    var duration = video.duration;
+    var known = isFinite(duration) && duration > 0;
+
+    receiver.emit('progress', {
+      seconds: seconds,
+      duration: known ? duration : null,
+      percent: known ? Math.min(1, seconds / duration) : null
     });
   });
 
