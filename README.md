@@ -25,17 +25,29 @@ player.on('ready', () => {
 Install
 -------
 
-Player.js is hosted on Embedly's CDN. :
+Player.js is hosted on Embedly's CDN. It sets a `playerjs` global:
 
 ```html
 <script type="text/javascript" src="//cdn.embed.ly/player-0.1.0.min.js"></script>
 ```
 
-install via npm :
+Or install it from npm:
 
 ```sh
 npm install player.js
 ```
+
+```js
+// ES modules: the playerjs namespace, or individual exports
+import playerjs from 'player.js';
+import { Player, Receiver } from 'player.js';
+
+// CommonJS
+const playerjs = require('player.js');
+```
+
+TypeScript types are included. Player.js can be imported during server-side
+rendering; create players in the browser only.
 
 Ready
 -----
@@ -401,3 +413,27 @@ const adapter = new playerjs.JWPlayerAdapter(jwplayer());
 
 jwplayer().onReady(() => adapter.ready());
 ```
+
+Development
+-----------
+
+Player.js is written in TypeScript and uses [Vite+](https://viteplus.dev)
+for building, formatting, linting, and unit tests, and Playwright for browser
+tests. You need Node.js 22.18 or later.
+
+```sh
+npm install
+npm run build        # dist/: ESM, CommonJS and UMD (player.js, player.min.js)
+npm run dev          # rebuild on change
+npm run check        # format, lint and type checks (npm run fix to auto-fix)
+npm test             # build, then unit tests and browser tests
+npm run test:ui      # browser tests in Playwright's UI
+```
+
+The browser tests run in Google Chrome, which needs to be installed. To test
+the minified bundle, set `PLAYERJS_BUNDLE=dist/player.min.js`.
+
+To publish the browser bundles to the CDN as `player-<version>.js` and
+`player-<version>.min.js`, bump the version in `package.json`, then run
+`npm run release:cdn -- --dry-run` to check and `npm run release:cdn` to
+upload (needs AWS credentials).
