@@ -236,3 +236,45 @@ test.describe('event listeners', () => {
     expect(n).toBe(1);
   });
 });
+
+test.describe('remounting an embed with the same src', () => {
+  // As SPA frameworks do: remove the iframe, add a new one with the same src.
+  // The removed Player used to pick up the new iframe's ready and, before
+  // #94, crashed sending its queue to a null contentWindow (#93, #75).
+  const remount = (page: any, destroyFirst: boolean) =>
+    page.evaluate(async (destroyFirst: boolean) => {
+      const w = window as any;
+      const a = addFrame('/e2e/fixtures/mock.html?delay=500');
+      const old = new playerjs.Player(a);
+      const counts = { oldReady: 0, oldPlay: 0, newPlay: 0 };
+      old.on('ready', () => counts.oldReady++);
+      old.on('play', () => counts.oldPlay++);
+      old.getDuration(() => {});
+      await timeout(100);
+      if (destroyFirst) old.destroy();
+      a.remove();
+
+      const b = addFrame('/e2e/fixtures/mock.html?delay=500');
+      const p = (w.player = new playerjs.Player(b));
+      await whenReady(p);
+      p.on('play', () => counts.newPlay++);
+      await timeout(100);
+      p.play();
+      await timeout(500);
+      return { ...counts, oldIsReady: old.isReady, newDuration: await get('getDuration') };
+    }, destroyFirst);
+
+  test.beforeEach(async ({ page }) => {
+    await openParent(page);
+  });
+
+  for (const destroyFirst of [false]) {
+    test(`${destroyFirst ? 'after destroy()' : 'without destroy()'}: no errors and the old player stays asleep`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (e) => errors.push(e.message));
+      const r = await remount(page, destroyFirst);
+      expect(errors).toEqual([]);
+      expect(r).toEqual({ oldReady: 0, oldPlay: 0, newPlay: 1, oldIsReady: false, newDuration: 20 });
+    });
+  }
+});
