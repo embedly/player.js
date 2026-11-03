@@ -14,7 +14,7 @@
     var params = new URLSearchParams(location.search);
 
     // ?throttle=1 makes the test server send the video slowly.
-    var src = '/lib/videos/demo.mp4' + (params.get('throttle') ? '?throttle=1' : '');
+    var src = '/e2e/fixtures/demo.mp4' + (params.get('throttle') ? '?throttle=1' : '');
 
     // ?early=1 mirrors the original test page: ready immediately, before any
     // media metadata exists. Otherwise wait for metadata like a real

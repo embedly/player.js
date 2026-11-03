@@ -1,3 +1,9 @@
 node_modules
 test-results/
 playwright-report/
+
+# Build output. dist/player-0.1.0*.js stay committed: they are the 0.1.0
+# release files and people may link to them directly.
+dist/*
+!dist/player-0.1.0.js
+!dist/player-0.1.0.min.js
