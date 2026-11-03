@@ -19,6 +19,9 @@ declare function timeout<T>(ms: number, value?: T): Promise<T>;
 declare const __messages: { origin: string; data: unknown }[];
 declare const __received: { origin: string; data: unknown }[];
 
+// Version sent on the wire; must track package.json.
+const VERSION: string = require('../package.json').version;
+
 const LISTENER_ID = /^listener-[0-9a-f]{12}4[0-9a-f]{3}[89ab][0-9a-f]{15}$/;
 const MOCK_URL = `${CHILD}/e2e/fixtures/mock.html`;
 
@@ -48,7 +51,7 @@ test.describe('message format', () => {
     const ready = await page.evaluate(() => childMessages().find((m) => m.event === 'ready'));
     expect(ready).toEqual({
       context: 'player.js',
-      version: '0.0.11',
+      version: VERSION,
       event: 'ready',
       value: {
         src: MOCK_URL,
@@ -64,12 +67,12 @@ test.describe('message format', () => {
       __received.map((m) => JSON.parse(m.data as string)).filter((d) => d.method === 'getDuration'),
     );
     expect(sent).toEqual([
-      { method: 'getDuration', context: 'player.js', version: '0.0.11', listener: expect.stringMatching(LISTENER_ID) },
+      { method: 'getDuration', context: 'player.js', version: VERSION, listener: expect.stringMatching(LISTENER_ID) },
     ]);
 
     const reply = await page.evaluate(() => childMessages().filter((m) => m.event === 'getDuration'));
     expect(reply).toEqual([
-      { context: 'player.js', version: '0.0.11', event: 'getDuration', value: 20, listener: sent[0].listener },
+      { context: 'player.js', version: VERSION, event: 'getDuration', value: 20, listener: sent[0].listener },
     ]);
   });
 
@@ -83,8 +86,8 @@ test.describe('message format', () => {
       __received.map((m) => JSON.parse(m.data as string)).filter((d) => d.method === 'setVolume' || d.method === 'mute'),
     );
     expect(sent).toEqual([
-      { method: 'setVolume', value: 42, context: 'player.js', version: '0.0.11' },
-      { method: 'mute', context: 'player.js', version: '0.0.11' },
+      { method: 'setVolume', value: 42, context: 'player.js', version: VERSION },
+      { method: 'mute', context: 'player.js', version: VERSION },
     ]);
   });
 
@@ -98,21 +101,15 @@ test.describe('message format', () => {
       __received.map((m) => JSON.parse(m.data as string)).filter((d) => d.method === 'addEventListener' && d.value === 'play'),
     );
     expect(add).toEqual([
-      { method: 'addEventListener', value: 'play', listener: expect.stringMatching(LISTENER_ID), context: 'player.js', version: '0.0.11' },
+      { method: 'addEventListener', value: 'play', listener: expect.stringMatching(LISTENER_ID), context: 'player.js', version: VERSION },
     ]);
 
     const evt = await page.evaluate(() => childMessages().filter((m) => m.event === 'play'));
-    expect(evt).toEqual([{ context: 'player.js', version: '0.0.11', event: 'play', listener: add[0].listener }]);
+    expect(evt).toEqual([{ context: 'player.js', version: VERSION, event: 'play', listener: add[0].listener }]);
   });
 
-  test('VERSION sent on the wire is 0.0.11', async ({ page }) => {
-    expect(await page.evaluate(() => playerjs.VERSION)).toBe('0.0.11');
-  });
-
-  // BUG: package.json is 0.1.0 but src/core.js still says 0.0.11.
-  test.fail('VERSION matches package.json', async ({ page }) => {
-    const pkg = require('../package.json');
-    expect(await page.evaluate(() => playerjs.VERSION)).toBe(pkg.version);
+  test('VERSION matches package.json', async ({ page }) => {
+    expect(await page.evaluate(() => playerjs.VERSION)).toBe(VERSION);
   });
 });
 
