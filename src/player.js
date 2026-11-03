@@ -1,4 +1,4 @@
-/*globals playerjs:true*/
+/*globals playerjs:true, WeakSet:false*/
 /*
 * Player.js is a javascript library for interacting with iframes via
 * postMessage that use an Open Player Spec
@@ -62,6 +62,21 @@ playerjs.METHODS.all = function(){
 
 playerjs.READIED = [];
 
+// Windows that have sent 'ready', so a Player created later can recognize its
+// iframe even when the iframe's URL no longer matches its src attribute
+// (redirects, history.replaceState). Weak so removed iframes can be collected.
+var readiedWindows = typeof WeakSet === 'function' ? new WeakSet() : null;
+
+// Is this ready message from the given iframe? Match the sending window, so
+// it works even if the iframe's URL has changed since src was set. Matching
+// the src the receiver reports is kept so nothing that worked before breaks.
+function isFromFrame(e, data, elem) {
+  if (e.source && elem.contentWindow && e.source === elem.contentWindow) {
+    return true;
+  }
+  return !!(data.value && data.value.src === elem.src);
+}
+
 playerjs.Player.prototype.init = function(elem, options){
 
   var self = this;
@@ -102,7 +117,8 @@ playerjs.Player.prototype.init = function(elem, options){
   }
 
   // See if we caught the src event first, otherwise assume we haven't loaded
-  if (playerjs.indexOf(playerjs.READIED, elem.src) > -1){
+  if (playerjs.indexOf(playerjs.READIED, elem.src) > -1 ||
+      (readiedWindows && elem.contentWindow && readiedWindows.has(elem.contentWindow))){
     self.loaded = true;
   } else {
     // Try the onload event, just lets us give another test.
@@ -165,7 +181,7 @@ playerjs.Player.prototype.receive = function(e){
   }
 
   // We need to determine if we are ready.
-  if (data.event === 'ready' && data.value && data.value.src === this.elem.src){
+  if (data.event === 'ready' && data.value && isFromFrame(e, data, this.elem)){
     this.ready(data);
   }
 
@@ -322,5 +338,8 @@ playerjs.addEvent(window, 'message', function(e){
   // We need to determine if we are ready.
   if (data.event === 'ready' && data.value && data.value.src){
     playerjs.READIED.push(data.value.src);
+    if (readiedWindows && e.source) {
+      readiedWindows.add(e.source);
+    }
   }
 });
