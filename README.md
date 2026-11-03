@@ -202,6 +202,21 @@ player.supports('method', 'getDuration');
 player.supports('event', 'ended');
 ```
 
+`destroy`: void
+Stop the player: it no longer handles messages from the iframe, and calls
+made afterwards do nothing. Call it when you remove the iframe, for example
+when a component unmounts. If you keep the iframe on the page, call `off()`
+first so the iframe stops sending events.
+
+```js
+// React
+useEffect(() => {
+  const player = new playerjs.Player(iframeRef.current);
+  player.on('ready', () => player.play());
+  return () => player.destroy();
+}, []);
+```
+
 Events
 ------
 

@@ -310,6 +310,26 @@ test.describe('ready handshake', () => {
   });
 });
 
+test.describe('several players from the same origin', () => {
+  // A listener-less ready from one iframe used to fire the ready callbacks
+  // of every Player on the page from that origin, even ones whose own
+  // iframe never became ready (README: "inconsistencies if you have
+  // multiple players on the page").
+  test("another iframe's ready doesn't fire this player's ready", async ({ page }) => {
+    await openParent(page);
+    const r = await page.evaluate(async () => {
+      const slow = new playerjs.Player(addFrame('/e2e/fixtures/mock.html?delay=60000'));
+      const fast = new playerjs.Player(addFrame('/e2e/fixtures/mock.html'));
+      const counts = { slow: 0, fast: 0 };
+      slow.on('ready', () => counts.slow++);
+      fast.on('ready', () => counts.fast++);
+      await timeout(1000);
+      return { ...counts, slowIsReady: slow.isReady, fastIsReady: fast.isReady };
+    });
+    expect(r).toEqual({ slow: 0, fast: 1, slowIsReady: false, fastIsReady: true });
+  });
+});
+
 test.describe('referrer-less iframes', () => {
   // Characterization of a security/robustness problem: the Receiver derives
   // the parent origin from document.referrer. With no referrer its origin is

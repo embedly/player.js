@@ -70,8 +70,13 @@ var readiedWindows = typeof WeakSet === 'function' ? new WeakSet() : null;
 // Is this ready message from the given iframe? Match the sending window, so
 // it works even if the iframe's URL has changed since src was set. Matching
 // the src the receiver reports is kept so nothing that worked before breaks.
+// An iframe that has been removed from the page has no window and can't be
+// the sender, so a stale Player doesn't pick up a new iframe's ready (#93).
 function isFromFrame(e, data, elem) {
-  if (e.source && elem.contentWindow && e.source === elem.contentWindow) {
+  if (!elem.contentWindow) {
+    return false;
+  }
+  if (e.source === elem.contentWindow) {
     return true;
   }
   return !!(data.value && data.value.src === elem.src);
@@ -108,10 +113,11 @@ playerjs.Player.prototype.init = function(elem, options){
   this.methods = playerjs.METHODS.all();
 
   if (playerjs.POST_MESSAGE){
-    // Set up the reciever.
-    playerjs.addEvent(window, 'message', function(e){
+    // Set up the reciever. Keep a reference so destroy() can remove it.
+    this._onMessage = function(e){
       self.receive(e);
-    });
+    };
+    playerjs.addEvent(window, 'message', this._onMessage);
   } else {
     playerjs.log('Post Message is not Available.');
   }
@@ -129,6 +135,10 @@ playerjs.Player.prototype.init = function(elem, options){
 };
 
 playerjs.Player.prototype.send = function(data, callback, ctx){
+  if (this.destroyed){
+    return false;
+  }
+
   // Add the context and version to the data.
   data.context = playerjs.CONTEXT;
   data.version = playerjs.VERSION;
@@ -180,9 +190,16 @@ playerjs.Player.prototype.receive = function(e){
     return false;
   }
 
-  // We need to determine if we are ready.
-  if (data.event === 'ready' && data.value && isFromFrame(e, data, this.elem)){
-    this.ready(data);
+  // We need to determine if we are ready. A ready from any other iframe
+  // (another player, or a new iframe after ours was removed) is not ours:
+  // ignore it so it doesn't fire our ready callbacks.
+  if (data.event === 'ready'){
+    if (!isFromFrame(e, data, this.elem)){
+      return false;
+    }
+    if (data.value){
+      this.ready(data);
+    }
   }
 
   if (this.keeper.has(data.event, data.listener)){
@@ -257,6 +274,13 @@ playerjs.Player.prototype.off = function(event, callback){
   }
 
   return listeners.length > 0;
+};
+
+// Stop the player handling messages and sending calls, e.g. when the iframe
+// is removed. Safe to call more than once.
+playerjs.Player.prototype.destroy = function(){
+  window.removeEventListener('message', this._onMessage, false);
+  this.destroyed = true;
 };
 
 // Based on what ready passed back, we can determine if the events/method are
