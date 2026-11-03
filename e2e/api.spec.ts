@@ -12,6 +12,7 @@ declare function whenReady(p: any, ms?: number): Promise<void>;
 declare function get(name: string, ms?: number): Promise<any>;
 declare function nextEvent(name: string, ms?: number): Promise<any>;
 declare function timeout<T>(ms: number, value?: T): Promise<T>;
+declare const __received: { origin: string; data: unknown }[];
 
 // Run fn in the page and return what it threw (player.js throws strings).
 const thrown = (fn: string) => `(() => { try { (${fn})(); return null; } catch (e) { return { type: typeof e, value: String(e) }; } })()`;
@@ -268,7 +269,7 @@ test.describe('remounting an embed with the same src', () => {
     await openParent(page);
   });
 
-  for (const destroyFirst of [false]) {
+  for (const destroyFirst of [false, true]) {
     test(`${destroyFirst ? 'after destroy()' : 'without destroy()'}: no errors and the old player stays asleep`, async ({ page }) => {
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message));
@@ -277,4 +278,60 @@ test.describe('remounting an embed with the same src', () => {
       expect(r).toEqual({ oldReady: 0, oldPlay: 0, newPlay: 1, oldIsReady: false, newDuration: 20 });
     });
   }
+});
+
+test.describe('destroy()', () => {
+  // Methods that reached the mock receiver, per its raw message log.
+  const sentToReceiver = (page: any, methods: string[]) =>
+    childFrame(page, 'mock').evaluate(
+      (methods: string[]) => __received.map((m) => JSON.parse(m.data as string).method).filter((m) => methods.includes(m)),
+      methods,
+    );
+
+  test.beforeEach(async ({ page }) => {
+    await openParent(page);
+  });
+
+  test('stops handling messages and sending calls', async ({ page }) => {
+    await page.evaluate(() => (window as any).createPlayer('/e2e/fixtures/mock.html'));
+    const result = page.evaluate(async () => {
+      const calls = { play: 0, getter: 0, receive: 0 };
+      player.on('play', () => calls.play++);
+      await timeout(100);
+
+      player.destroy();
+      player.destroy(); // safe to call twice
+
+      // If the window listener were still attached, this would be called.
+      player.receive = () => calls.receive++;
+
+      const send = player.send({ method: 'play' });
+      player.play();
+      player.setVolume(10);
+      player.getDuration(() => calls.getter++);
+      await timeout(600);
+      return { send, calls };
+    });
+    // A listener-less event from the iframe would reach every play listener.
+    await page.waitForTimeout(200);
+    await childFrame(page, 'mock').evaluate(() =>
+      window.parent.postMessage(JSON.stringify({ context: 'player.js', event: 'play' }), '*'),
+    );
+    expect(await result).toEqual({ send: false, calls: { play: 0, getter: 0, receive: 0 } });
+    expect(await sentToReceiver(page, ['play', 'setVolume', 'getDuration'])).toEqual([]);
+  });
+
+  test('before ready: queued calls are never sent', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (e) => errors.push(e.message));
+    await page.evaluate(async () => {
+      const p = new playerjs.Player(addFrame('/e2e/fixtures/mock.html?delay=500'));
+      p.setVolume(42);
+      p.play();
+      p.destroy();
+      await timeout(1000);
+    });
+    expect(await sentToReceiver(page, ['setVolume', 'play'])).toEqual([]);
+    expect(errors).toEqual([]);
+  });
 });

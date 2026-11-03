@@ -113,10 +113,11 @@ playerjs.Player.prototype.init = function(elem, options){
   this.methods = playerjs.METHODS.all();
 
   if (playerjs.POST_MESSAGE){
-    // Set up the reciever.
-    playerjs.addEvent(window, 'message', function(e){
+    // Set up the reciever. Keep a reference so destroy() can remove it.
+    this._onMessage = function(e){
       self.receive(e);
-    });
+    };
+    playerjs.addEvent(window, 'message', this._onMessage);
   } else {
     playerjs.log('Post Message is not Available.');
   }
@@ -134,6 +135,10 @@ playerjs.Player.prototype.init = function(elem, options){
 };
 
 playerjs.Player.prototype.send = function(data, callback, ctx){
+  if (this.destroyed){
+    return false;
+  }
+
   // Add the context and version to the data.
   data.context = playerjs.CONTEXT;
   data.version = playerjs.VERSION;
@@ -269,6 +274,13 @@ playerjs.Player.prototype.off = function(event, callback){
   }
 
   return listeners.length > 0;
+};
+
+// Stop the player handling messages and sending calls, e.g. when the iframe
+// is removed. Safe to call more than once.
+playerjs.Player.prototype.destroy = function(){
+  window.removeEventListener('message', this._onMessage, false);
+  this.destroyed = true;
 };
 
 // Based on what ready passed back, we can determine if the events/method are
