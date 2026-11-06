@@ -129,7 +129,7 @@ It's helpful to have a quick example of the JavaScript before moving forward.
 ::
 
   // Play the video
-  document.getElementById('#iframe').contentWindow.postMessage(
+  document.getElementById('iframe').contentWindow.postMessage(
     JSON.stringify({
       context: 'player.js',
       version: 'version',
@@ -139,21 +139,21 @@ It's helpful to have a quick example of the JavaScript before moving forward.
 
   // Set up an event listener.
 
-  var iframe = document.getElementById('#iframe'),
+  var iframe = document.getElementById('iframe'),
     origin = iframe.src.split('/', 3).join('/');
 
   var played = function(){
     console.log('played');
   };
 
-  window.addEventListener('message', function(){
+  window.addEventListener('message', function(e){
     if (e.origin === origin){
       var data = JSON.parse(e.data);
-      if (data.context === 'player.js' && data.event === play){
+      if (data.context === 'player.js' && data.event === 'play'){
         played();
       }
     }
-  });
+  }, false);
 
   iframe.contentWindow.postMessage(
     JSON.stringify({
@@ -161,7 +161,7 @@ It's helpful to have a quick example of the JavaScript before moving forward.
       version: 'version',
       method: 'addEventListener',
       value: 'play'
-    });
+    }), origin
   );
 
 
